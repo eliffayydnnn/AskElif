@@ -1,3 +1,5 @@
+using AskElif.API.DTOs;
+using AskElif.API.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AskElif.API.Controllers;
@@ -6,14 +8,22 @@ namespace AskElif.API.Controllers;
 [Route("api/[controller]")]
 public class ChatController : ControllerBase
 {
-    [HttpGet("health")]
-    public IActionResult Health()
+    private readonly IChatService _chatService;
+
+    public ChatController(IChatService chatService)
     {
-        return Ok(new
+        _chatService = chatService;
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Ask(ChatRequestDto request)
+    {
+        var answer = await _chatService.AskAsync(request.Message);
+
+        return Ok(new ChatResponseDto
         {
-            status = "API is running",
-            project = "AskElif",
-            version = "1.0.0"
+            Answer = answer,
+            IsAnswered = true
         });
     }
 }

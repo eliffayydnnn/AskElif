@@ -1,5 +1,5 @@
+using AskElif.API.DTOs;
 using AskElif.API.Interfaces;
-using AskElif.API.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AskElif.API.Controllers;
@@ -8,24 +8,24 @@ namespace AskElif.API.Controllers;
 [Route("api/[controller]")]
 public class KnowledgeController : ControllerBase
 {
-    private readonly IKnowledgeRepository _repository;
+    private readonly IKnowledgeService _service;
 
-    public KnowledgeController(IKnowledgeRepository repository)
+    public KnowledgeController(IKnowledgeService service)
     {
-        _repository = repository;
+        _service = service;
     }
 
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var knowledgeItems = await _repository.GetAllAsync();
+        var knowledgeItems = await _service.GetAllAsync();
         return Ok(knowledgeItems);
     }
 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var knowledgeItem = await _repository.GetByIdAsync(id);
+        var knowledgeItem = await _service.GetByIdAsync(id);
 
         if (knowledgeItem == null)
             return NotFound();
@@ -34,30 +34,23 @@ public class KnowledgeController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Create(KnowledgeItem knowledgeItem)
+    public async Task<IActionResult> Create(CreateKnowledgeDto dto)
     {
-        await _repository.AddAsync(knowledgeItem);
+        var created = await _service.CreateAsync(dto);
 
         return CreatedAtAction(
             nameof(GetById),
-            new { id = knowledgeItem.Id },
-            knowledgeItem);
+            new { id = created.Id },
+            created);
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> Update(int id, KnowledgeItem updatedItem)
+    public async Task<IActionResult> Update(int id, UpdateKnowledgeDto dto)
     {
-        var knowledgeItem = await _repository.GetByIdAsync(id);
+        var updated = await _service.UpdateAsync(id, dto);
 
-        if (knowledgeItem == null)
+        if (!updated)
             return NotFound();
-
-        knowledgeItem.Title = updatedItem.Title;
-        knowledgeItem.Category = updatedItem.Category;
-        knowledgeItem.Content = updatedItem.Content;
-        knowledgeItem.UpdatedAt = DateTime.UtcNow;
-
-        await _repository.UpdateAsync(knowledgeItem);
 
         return NoContent();
     }
@@ -65,12 +58,10 @@ public class KnowledgeController : ControllerBase
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var knowledgeItem = await _repository.GetByIdAsync(id);
+        var deleted = await _service.DeleteAsync(id);
 
-        if (knowledgeItem == null)
+        if (!deleted)
             return NotFound();
-
-        await _repository.DeleteAsync(knowledgeItem);
 
         return NoContent();
     }

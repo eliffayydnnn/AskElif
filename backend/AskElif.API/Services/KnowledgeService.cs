@@ -17,18 +17,18 @@ public class KnowledgeService : IKnowledgeService
     {
         var items = await _repository.GetAllAsync();
 
-        return items.Select(x => new KnowledgeDto
+        return items.Select(item => new KnowledgeDto
         {
-            Id = x.Id,
-            Title = x.Title,
-            Category = x.Category,
-            Content = x.Content,
-            Source = x.Source,
-            Tags = x.Tags,
-            Priority = x.Priority,
-            IsPublished = x.IsPublished,
-            CreatedAt = x.CreatedAt,
-            UpdatedAt = x.UpdatedAt
+            Id = item.Id,
+            Title = item.Title,
+            Category = item.Category,
+            Content = item.Content,
+            Source = item.Source,
+            Tags = item.Tags,
+            Priority = item.Priority,
+            IsPublished = item.IsPublished,
+            CreatedAt = item.CreatedAt,
+            UpdatedAt = item.UpdatedAt
         }).ToList();
     }
 
@@ -86,11 +86,34 @@ public class KnowledgeService : IKnowledgeService
 
     public async Task<bool> UpdateAsync(int id, UpdateKnowledgeDto dto)
     {
-        throw new NotImplementedException();
+        var item = await _repository.GetByIdAsync(id);
+
+        if (item == null)
+            return false;
+
+        item.Title = dto.Title;
+        item.Category = dto.Category;
+        item.Content = dto.Content;
+        item.Source = dto.Source;
+        item.Tags = dto.Tags;
+        item.Priority = dto.Priority;
+        item.IsPublished = dto.IsPublished;
+        item.UpdatedAt = DateTime.UtcNow;
+
+        await _repository.UpdateAsync(item);
+
+        return true;
     }
 
     public async Task<bool> DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var item = await _repository.GetByIdAsync(id);
+
+        if (item == null)
+            return false;
+
+        await _repository.DeleteAsync(item);
+
+        return true;
     }
 }

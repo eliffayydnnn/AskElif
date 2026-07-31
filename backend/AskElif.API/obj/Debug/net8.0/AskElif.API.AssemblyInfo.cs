@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AskElif.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2c67f8c2b4c2b545e68e1e0f8721d6796f38e71e")]
 [assembly: System.Reflection.AssemblyProductAttribute("AskElif.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AskElif.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

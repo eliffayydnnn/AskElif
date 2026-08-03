@@ -11,6 +11,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IKnowledgeRepository, KnowledgeRepository>(); 
 builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 builder.Services.AddScoped<IChatService, ChatService>();
+builder.Services.AddScoped<IUnknownQuestionRepository, UnknownQuestionRepository>();
 // Add services to the container.
 
 builder.Services.AddControllers();

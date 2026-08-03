@@ -24,6 +24,23 @@ public class KnowledgeRepository : IKnowledgeRepository
         return await _context.KnowledgeItems.FindAsync(id);
     }
 
+    public async Task<KnowledgeItem?> SearchAsync(string question)
+    {
+        var lowerQuestion = question.ToLower();
+
+        return await _context.KnowledgeItems
+            .Where(x =>
+                x.IsPublished &&
+                (
+                    x.Title.ToLower().Contains(lowerQuestion) ||
+                    x.Category.ToLower().Contains(lowerQuestion) ||
+                    x.Content.ToLower().Contains(lowerQuestion) ||
+                    x.Tags.ToLower().Contains(lowerQuestion)
+                ))
+            .OrderByDescending(x => x.Priority)
+            .FirstOrDefaultAsync();
+    }
+
     public async Task AddAsync(KnowledgeItem knowledgeItem)
     {
         await _context.KnowledgeItems.AddAsync(knowledgeItem);

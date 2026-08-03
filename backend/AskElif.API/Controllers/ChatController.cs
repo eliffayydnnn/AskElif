@@ -18,12 +18,15 @@ public class ChatController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Ask(ChatRequestDto request)
     {
-        var answer = await _chatService.AskAsync(request.Message);
+        var result = await _chatService.AskAsync(
+            request.ConversationId,
+            request.Message);
 
         return Ok(new ChatResponseDto
         {
-            Answer = answer,
-            IsAnswered = true
+            ConversationId = result.ConversationId,
+            Answer = result.Answer,
+            IsAnswered = result.IsAnswered
         });
     }
 }

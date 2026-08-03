@@ -8,6 +8,8 @@ public interface IKnowledgeRepository
 
     Task<KnowledgeItem?> GetByIdAsync(int id);
 
+    Task<KnowledgeItem?> SearchAsync(string question);
+
     Task AddAsync(KnowledgeItem knowledgeItem);
 
     Task UpdateAsync(KnowledgeItem knowledgeItem);

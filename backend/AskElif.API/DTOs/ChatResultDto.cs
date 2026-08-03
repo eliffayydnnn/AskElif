@@ -1,6 +1,6 @@
 namespace AskElif.API.DTOs;
 
-public class ChatResponseDto
+public class ChatResultDto
 {
     public int ConversationId { get; set; }
 

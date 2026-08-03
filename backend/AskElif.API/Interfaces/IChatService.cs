@@ -1,6 +1,8 @@
+using AskElif.API.DTOs;
+
 namespace AskElif.API.Interfaces;
 
 public interface IChatService
 {
-    Task<string> AskAsync(string question);
+    Task<ChatResultDto> AskAsync(int? conversationId, string question);
 }

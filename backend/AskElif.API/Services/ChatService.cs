@@ -1,3 +1,4 @@
+using AskElif.API.DTOs;
 using AskElif.API.Interfaces;
 using AskElif.API.Models;
 
@@ -7,16 +8,22 @@ public class ChatService : IChatService
 {
     private readonly IKnowledgeRepository _knowledgeRepository;
     private readonly IUnknownQuestionRepository _unknownQuestionRepository;
+    private readonly IConversationRepository _conversationRepository;
+    private readonly IMessageRepository _messageRepository;
 
     public ChatService(
         IKnowledgeRepository knowledgeRepository,
-        IUnknownQuestionRepository unknownQuestionRepository)
+        IUnknownQuestionRepository unknownQuestionRepository,
+        IConversationRepository conversationRepository,
+        IMessageRepository messageRepository)
     {
         _knowledgeRepository = knowledgeRepository;
         _unknownQuestionRepository = unknownQuestionRepository;
+        _conversationRepository = conversationRepository;
+        _messageRepository = messageRepository;
     }
 
-    public async Task<string> AskAsync(string question)
+    public async Task<ChatResultDto> AskAsync(int? conversationId, string question)
     {
         var knowledgeItems = await _knowledgeRepository.GetAllAsync();
 
@@ -36,7 +43,12 @@ public class ChatService : IChatService
 
         if (matchedItem != null)
         {
-            return matchedItem.Content;
+            return new ChatResultDto
+            {
+                ConversationId = conversationId ?? 0,
+                Answer = matchedItem.Content,
+                IsAnswered = true
+            };
         }
 
         await _unknownQuestionRepository.AddAsync(new UnknownQuestion
@@ -44,6 +56,11 @@ public class ChatService : IChatService
             Question = question
         });
 
-        return "Bu konuda henüz bilgim bulunmuyor.";
+        return new ChatResultDto
+        {
+            ConversationId = conversationId ?? 0,
+            Answer = "Bu konuda henüz bilgim bulunmuyor.",
+            IsAnswered = false
+        };
     }
 }

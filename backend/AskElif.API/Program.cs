@@ -12,6 +12,9 @@ builder.Services.AddScoped<IKnowledgeRepository, KnowledgeRepository>();
 builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IUnknownQuestionRepository, UnknownQuestionRepository>();
+builder.Services.AddScoped<IConversationRepository, ConversationRepository>();
+builder.Services.AddScoped<IMessageRepository, MessageRepository>();
+builder.Services.AddScoped<IKnowledgeSearchService, KnowledgeSearchService>();
 // Add services to the container.
 
 builder.Services.AddControllers();

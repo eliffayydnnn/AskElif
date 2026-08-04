@@ -25,21 +25,42 @@ public class KnowledgeRepository : IKnowledgeRepository
     }
 
     public async Task<KnowledgeItem?> SearchAsync(string question)
-    {
-        var lowerQuestion = question.ToLower();
+{
+    var questionLower = question.ToLower();
 
-        return await _context.KnowledgeItems
-            .Where(x =>
-                x.IsPublished &&
-                (
-                    x.Title.ToLower().Contains(lowerQuestion) ||
-                    x.Category.ToLower().Contains(lowerQuestion) ||
-                    x.Content.ToLower().Contains(lowerQuestion) ||
-                    x.Tags.ToLower().Contains(lowerQuestion)
-                ))
-            .OrderByDescending(x => x.Priority)
-            .FirstOrDefaultAsync();
-    }
+    var words = questionLower
+        .Replace("?", "")
+        .Replace(".", "")
+        .Replace(",", "")
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+    var knowledgeItems = await _context.KnowledgeItems
+        .Where(x => x.IsPublished)
+        .ToListAsync();
+
+    return knowledgeItems
+        .Where(item =>
+        {
+            var title = item.Title.ToLower();
+            var category = item.Category.ToLower();
+            var content = item.Content.ToLower();
+            var tags = item.Tags.ToLower();
+
+            return words.Any(word =>
+                title.Contains(word) ||
+                word.Contains(title) ||
+
+                category.Contains(word) ||
+                word.Contains(category) ||
+
+                content.Contains(word) ||
+
+                tags.Contains(word)
+            );
+        })
+        .OrderByDescending(x => x.Priority)
+        .FirstOrDefault();
+}
 
     public async Task AddAsync(KnowledgeItem knowledgeItem)
     {

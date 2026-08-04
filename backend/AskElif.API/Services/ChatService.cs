@@ -6,18 +6,18 @@ namespace AskElif.API.Services;
 
 public class ChatService : IChatService
 {
-    private readonly IKnowledgeRepository _knowledgeRepository;
+    private readonly IKnowledgeSearchService _knowledgeSearchService;
     private readonly IUnknownQuestionRepository _unknownQuestionRepository;
     private readonly IConversationRepository _conversationRepository;
     private readonly IMessageRepository _messageRepository;
 
     public ChatService(
-        IKnowledgeRepository knowledgeRepository,
+        IKnowledgeSearchService knowledgeSearchService,
         IUnknownQuestionRepository unknownQuestionRepository,
         IConversationRepository conversationRepository,
         IMessageRepository messageRepository)
     {
-        _knowledgeRepository = knowledgeRepository;
+        _knowledgeSearchService = knowledgeSearchService;
         _unknownQuestionRepository = unknownQuestionRepository;
         _conversationRepository = conversationRepository;
         _messageRepository = messageRepository;
@@ -25,42 +25,52 @@ public class ChatService : IChatService
 
     public async Task<ChatResultDto> AskAsync(int? conversationId, string question)
     {
-        var knowledgeItems = await _knowledgeRepository.GetAllAsync();
+        // Conversation oluştur veya mevcut conversation'ı getir
+        var conversation = await _conversationRepository.CreateIfNotExistsAsync(conversationId);
 
-        var lowerQuestion = question.ToLower();
-
-        var matchedItem = knowledgeItems
-            .Where(x =>
-                x.IsPublished &&
-                (
-                    x.Title.ToLower().Contains(lowerQuestion) ||
-                    x.Category.ToLower().Contains(lowerQuestion) ||
-                    x.Content.ToLower().Contains(lowerQuestion) ||
-                    x.Tags.ToLower().Contains(lowerQuestion)
-                ))
-            .OrderByDescending(x => x.Priority)
-            .FirstOrDefault();
-
-        if (matchedItem != null)
+        // Kullanıcının mesajını kaydet
+        await _messageRepository.AddAsync(new Message
         {
-            return new ChatResultDto
+            ConversationId = conversation.Id,
+            Role = "User",
+            Content = question
+        });
+
+        // Bilgi tabanında ara
+        var knowledge = await _knowledgeSearchService.SearchAsync(question);
+
+        string answer;
+        bool isAnswered;
+
+        if (knowledge != null)
+        {
+            answer = knowledge.Content;
+            isAnswered = true;
+        }
+        else
+        {
+            answer = "Bu konuda henüz bilgim bulunmuyor.";
+            isAnswered = false;
+
+            await _unknownQuestionRepository.AddAsync(new UnknownQuestion
             {
-                ConversationId = conversationId ?? 0,
-                Answer = matchedItem.Content,
-                IsAnswered = true
-            };
+                Question = question
+            });
         }
 
-        await _unknownQuestionRepository.AddAsync(new UnknownQuestion
+        // Bot cevabını kaydet
+        await _messageRepository.AddAsync(new Message
         {
-            Question = question
+            ConversationId = conversation.Id,
+            Role = "Assistant",
+            Content = answer
         });
 
         return new ChatResultDto
         {
-            ConversationId = conversationId ?? 0,
-            Answer = "Bu konuda henüz bilgim bulunmuyor.",
-            IsAnswered = false
+            ConversationId = conversation.Id,
+            Answer = answer,
+            IsAnswered = isAnswered
         };
     }
 }

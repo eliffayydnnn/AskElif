@@ -9,4 +9,6 @@ public interface IConversationRepository
     Task<Conversation?> GetByIdAsync(int id);
 
     Task<Conversation> CreateIfNotExistsAsync(int? conversationId);
+
+    Task<List<Conversation>> GetAllAsync();
 }

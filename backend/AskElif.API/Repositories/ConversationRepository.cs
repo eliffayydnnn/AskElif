@@ -25,8 +25,16 @@ public class ConversationRepository : IConversationRepository
     public async Task<Conversation?> GetByIdAsync(int id)
     {
         return await _context.Conversations
-            .Include(c => c.Messages)
-            .FirstOrDefaultAsync(c => c.Id == id);
+            .Include(x => x.Messages)
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
+
+    public async Task<List<Conversation>> GetAllAsync()
+    {
+        return await _context.Conversations
+            .Include(x => x.Messages)
+            .OrderByDescending(x => x.StartedAt)
+            .ToListAsync();
     }
 
     public async Task<Conversation> CreateIfNotExistsAsync(int? conversationId)
@@ -41,10 +49,11 @@ public class ConversationRepository : IConversationRepository
             }
         }
 
-        var newConversation = new Conversation();
+        var conversation = new Conversation();
 
-        await AddAsync(newConversation);
+        await _context.Conversations.AddAsync(conversation);
+        await _context.SaveChangesAsync();
 
-        return newConversation;
+        return conversation;
     }
 }

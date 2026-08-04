@@ -21,14 +21,31 @@ public class UnknownQuestionsController : ControllerBase
         return Ok(questions);
     }
 
-    [HttpGet("{id}")]
-    public async Task<IActionResult> GetById(int id)
+    [HttpPut("{id}/resolve")]
+    public async Task<IActionResult> Resolve(int id)
     {
         var question = await _repository.GetByIdAsync(id);
 
         if (question == null)
             return NotFound();
 
+        question.IsResolved = true;
+
+        await _repository.UpdateAsync(question);
+
         return Ok(question);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var question = await _repository.GetByIdAsync(id);
+
+        if (question == null)
+            return NotFound();
+
+        await _repository.DeleteAsync(question);
+
+        return NoContent();
     }
 }

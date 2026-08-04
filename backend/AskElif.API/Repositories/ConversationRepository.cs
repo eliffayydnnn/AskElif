@@ -56,4 +56,13 @@ public class ConversationRepository : IConversationRepository
 
         return conversation;
     }
+
+    public async Task DeleteAsync(Conversation conversation)
+    {
+        _context.Messages.RemoveRange(conversation.Messages);
+
+        _context.Conversations.Remove(conversation);
+
+        await _context.SaveChangesAsync();
+    }
 }

@@ -65,4 +65,17 @@ public class ConversationController : ControllerBase
 
         return Ok(result);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var conversation = await _conversationRepository.GetByIdAsync(id);
+
+        if (conversation == null)
+            return NotFound();
+
+        await _conversationRepository.DeleteAsync(conversation);
+
+        return NoContent();
+    }
 }

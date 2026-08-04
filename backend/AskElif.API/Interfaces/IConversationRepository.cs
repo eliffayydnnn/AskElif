@@ -11,4 +11,6 @@ public interface IConversationRepository
     Task<Conversation> CreateIfNotExistsAsync(int? conversationId);
 
     Task<List<Conversation>> GetAllAsync();
+
+    Task DeleteAsync(Conversation conversation);
 }

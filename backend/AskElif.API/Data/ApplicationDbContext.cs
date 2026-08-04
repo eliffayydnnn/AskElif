@@ -17,4 +17,6 @@ public class ApplicationDbContext : DbContext
     public DbSet<Message> Messages { get; set; }
 
     public DbSet<UnknownQuestion> UnknownQuestions { get; set; }
+
+    public DbSet<AdminUser> AdminUsers { get; set; }
 }

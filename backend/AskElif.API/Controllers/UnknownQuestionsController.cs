@@ -1,10 +1,12 @@
 using AskElif.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AskElif.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class UnknownQuestionsController : ControllerBase
 {
     private readonly IUnknownQuestionRepository _repository;

@@ -1,11 +1,13 @@
 using AskElif.API.Data;
 using AskElif.API.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AskElif.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class DashboardController : ControllerBase
 {
     private readonly ApplicationDbContext _context;

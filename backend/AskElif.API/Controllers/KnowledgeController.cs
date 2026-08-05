@@ -1,11 +1,13 @@
 using AskElif.API.DTOs;
 using AskElif.API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AskElif.API.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public class KnowledgeController : ControllerBase
 {
     private readonly IKnowledgeService _service;

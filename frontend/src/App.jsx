@@ -1,16 +1,33 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import LoginPage from "./pages/Login/LoginPage";
 import DashboardPage from "./pages/Dashboard/DashboardPage";
+import KnowledgePage from "./pages/Knowledge/KnowledgePage";
+import ProtectedRoute from "./components/layout/ProtectedRoute";
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/dashboard" element={<DashboardPage />} />
-      </Routes>
-    </BrowserRouter>
+    <Routes>
+      <Route path="/" element={<LoginPage />} />
+
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <DashboardPage />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/knowledge"
+        element={
+          <ProtectedRoute>
+            <KnowledgePage />
+          </ProtectedRoute>
+        }
+      />
+    </Routes>
   );
 }
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/api";
+import "../../styles/conversations.css";
 
 function ConversationPage() {
   const [conversations, setConversations] = useState([]);
@@ -62,88 +63,92 @@ function ConversationPage() {
   }
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>Conversations</h1>
+    <div className="conversations-page">
+
+      <div className="conversations-header">
+
+        <div>
+
+          <div className="conversations-title">
+            💬 Conversations
+          </div>
+
+          <div className="conversations-subtitle">
+            Kullanıcıların chatbot ile yaptığı konuşmaları inceleyebilirsin.
+          </div>
+
+        </div>
+
+      </div>
 
       <input
-        type="text"
-        placeholder="Session Id ara..."
+        className="conversation-search"
+        placeholder="🔍 Session ID ara..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "12px",
-          margin: "25px 0",
-          borderRadius: "8px",
-          border: "1px solid #ddd",
-        }}
       />
 
       {filteredConversations.length === 0 ? (
-        <p>Konuşma bulunamadı.</p>
+
+        <div className="empty-state">
+          Konuşma bulunamadı.
+        </div>
+
       ) : (
+
         filteredConversations.map((conversation) => (
+
           <div
             key={conversation.id}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "10px",
-              padding: "20px",
-              marginBottom: "20px",
-              background: "#fff",
-            }}
+            className="conversation-card"
           >
-            <h3>Session</h3>
 
-            <p>{conversation.sessionId}</p>
+            <div className="conversation-top">
 
-            <p>
-              <strong>Başlangıç:</strong>{" "}
-              {new Date(conversation.startedAt).toLocaleString("tr-TR")}
-            </p>
+              <div>
 
-            <p>
-              <strong>Mesaj Sayısı:</strong>{" "}
-              {conversation.messages.length}
-            </p>
+                <div className="session-title">
+                  👤 Session #{conversation.id}
+                </div>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                marginTop: "20px",
-              }}
-            >
+                <div className="session-date">
+                  {new Date(
+                    conversation.startedAt
+                  ).toLocaleString("tr-TR")}
+                </div>
+
+              </div>
+
+              <div className="message-count">
+                💬 {conversation.messages.length} Mesaj
+              </div>
+
+            </div>
+
+            <div className="card-actions">
+
               <Link
                 to={`/conversations/${conversation.id}`}
-                style={{
-                  background: "#4F8EF7",
-                  color: "#fff",
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                }}
+                className="view-btn"
               >
-                Detay
+                Görüntüle
               </Link>
 
               <button
+                className="delete-btn"
                 onClick={() => handleDelete(conversation.id)}
-                style={{
-                  background: "#EF4444",
-                  color: "#fff",
-                  border: "none",
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
               >
                 Sil
               </button>
+
             </div>
+
           </div>
+
         ))
+
       )}
+
     </div>
   );
 }

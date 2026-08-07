@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import api from "../../api/api";
+import "../../styles/conversationDetail.css";
 
 function ConversationDetailPage() {
   const { id } = useParams();
@@ -28,98 +29,85 @@ function ConversationDetailPage() {
     return <h2>Yükleniyor...</h2>;
   }
 
+  if (!conversation) {
+    return <h2>Konuşma bulunamadı.</h2>;
+  }
+
   return (
-    <div
-      style={{
-        padding: "40px",
-        maxWidth: "900px",
-        margin: "0 auto",
-      }}
-    >
-      <Link
-        to="/conversations"
-        style={{
-          textDecoration: "none",
-          color: "#E26D9F",
-          fontWeight: "600",
-        }}
-      >
-        ← Konuşmalara Dön
-      </Link>
+    <div className="chat-page">
 
-      <h1 style={{ marginTop: "25px" }}>Conversation</h1>
+      <div className="chat-header">
 
-      <div
-        style={{
-          background: "#fff",
-          border: "1px solid #eee",
-          borderRadius: "12px",
-          padding: "20px",
-          marginBottom: "30px",
-        }}
-      >
-        <p>
-          <strong>Session Id</strong>
-        </p>
+        <div>
 
-        <p>{conversation.sessionId}</p>
+          <div className="chat-title">
+            💬 Conversation Detail
+          </div>
 
-        <p style={{ marginTop: "15px" }}>
-          <strong>Başlangıç Tarihi</strong>
-        </p>
+          <div className="chat-subtitle">
+            Kullanıcı ile AskElif arasında gerçekleşen konuşma.
+          </div>
 
-        <p>
-          {new Date(conversation.startedAt).toLocaleString("tr-TR")}
-        </p>
+        </div>
+
+        <Link
+          to="/conversations"
+          className="add-button"
+        >
+          ← Geri Dön
+        </Link>
+
       </div>
 
-      {conversation.messages.map((message, index) => {
-        const isUser = message.role === "User";
+      <div className="chat-container">
 
-        return (
-          <div
-            key={index}
-            style={{
-              display: "flex",
-              justifyContent: isUser ? "flex-end" : "flex-start",
-              marginBottom: "18px",
-            }}
-          >
+        {conversation.messages.map((message, index) => {
+
+          const isUser = message.role === "User";
+
+          return (
+
             <div
-              style={{
-                maxWidth: "70%",
-                padding: "16px",
-                borderRadius: "16px",
-                background: isUser ? "#FCE7F3" : "#EEF2FF",
-                boxShadow: "0 2px 8px rgba(0,0,0,.08)",
-              }}
+              key={index}
+              className={`message ${
+                isUser ? "user" : "assistant"
+              }`}
             >
-              <div
-                style={{
-                  fontWeight: "700",
-                  marginBottom: "8px",
-                  color: isUser ? "#C65D7B" : "#4F46E5",
-                }}
-              >
-                {isUser ? "👤 User" : "🤖 AskElif"}
+
+              <div className="message-bubble">
+
+                <div className="message-role">
+
+                  {isUser
+                    ? "👤 User"
+                    : "🤖 AskElif"}
+
+                </div>
+
+                <div>
+
+                  {message.content}
+
+                </div>
+
+                <div className="message-time">
+
+                  {new Date(
+                    message.createdAt
+                  ).toLocaleString("tr-TR")}
+
+                </div>
+
               </div>
 
-              <div>{message.content}</div>
-
-              <div
-                style={{
-                  fontSize: "12px",
-                  color: "#888",
-                  marginTop: "10px",
-                  textAlign: "right",
-                }}
-              >
-                {new Date(message.createdAt).toLocaleString("tr-TR")}
-              </div>
             </div>
-          </div>
-        );
-      })}
+
+          );
+
+        })}
+
+      </div>
+
     </div>
   );
 }

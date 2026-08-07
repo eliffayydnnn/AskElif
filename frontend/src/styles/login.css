@@ -1,0 +1,164 @@
+.login-page{
+    min-height:100vh;
+    display:grid;
+    grid-template-columns:1fr 500px;
+    background:linear-gradient(135deg,#FFF7FB,#FFEAF3);
+}
+
+.login-left{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:80px;
+}
+
+.login-logo{
+    font-size:60px;
+    margin-bottom:20px;
+}
+
+.login-title{
+    font-size:46px;
+    font-weight:800;
+    color:#D24C8E;
+}
+
+.login-subtitle{
+    font-size:18px;
+    color:#666;
+    margin-top:15px;
+    max-width:520px;
+    line-height:1.8;
+    text-align:center;
+}
+
+.login-right{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:40px;
+}
+
+.login-card{
+
+    width:100%;
+    max-width:420px;
+
+    background:rgba(255,255,255,.65);
+
+    backdrop-filter:blur(20px);
+
+    border-radius:28px;
+
+    padding:45px;
+
+    border:1px solid rgba(255,255,255,.5);
+
+    box-shadow:0 25px 60px rgba(0,0,0,.08);
+
+}
+
+.login-card h2{
+
+    margin-bottom:35px;
+
+    color:#333;
+
+}
+
+.login-group{
+
+    margin-bottom:22px;
+
+}
+
+.login-group label{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:#666;
+
+    font-weight:600;
+
+}
+
+.login-input{
+
+    width:100%;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    border:1px solid #E7D5DE;
+
+    outline:none;
+
+    transition:.25s;
+
+    box-sizing:border-box;
+
+    font-size:15px;
+
+}
+
+.login-input:focus{
+
+    border-color:#E26D9F;
+
+    box-shadow:0 0 0 4px rgba(226,109,159,.12);
+
+}
+
+.login-button{
+
+    width:100%;
+
+    padding:16px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#E26D9F;
+
+    color:white;
+
+    font-size:16px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.25s;
+
+}
+
+.login-button:hover{
+
+    transform:translateY(-2px);
+
+    background:#CF5A8B;
+
+    box-shadow:0 12px 25px rgba(226,109,159,.35);
+
+}
+
+@media(max-width:900px){
+
+.login-page{
+
+grid-template-columns:1fr;
+
+}
+
+.login-left{
+
+display:none;
+
+}
+
+}

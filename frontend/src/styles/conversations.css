@@ -1,0 +1,89 @@
+.conversations-page{
+    padding:35px;
+}
+
+.conversations-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.conversations-title{
+    font-size:32px;
+    font-weight:700;
+    color:#333;
+}
+
+.conversations-subtitle{
+    color:#777;
+    margin-top:5px;
+}
+
+.conversation-search{
+    width:100%;
+    padding:15px 18px;
+    border-radius:12px;
+    border:1px solid #EAD3DE;
+    margin-bottom:30px;
+    outline:none;
+}
+
+.conversation-card{
+    background:white;
+    border:1px solid #F4D9E5;
+    border-radius:18px;
+    padding:24px;
+    margin-bottom:18px;
+    transition:.25s;
+    box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.conversation-card:hover{
+    transform:translateY(-3px);
+    box-shadow:0 18px 40px rgba(0,0,0,.08);
+}
+
+.conversation-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.session-title{
+    font-weight:700;
+    color:#444;
+}
+
+.session-date{
+    color:#888;
+    font-size:14px;
+}
+
+.message-count{
+    margin-top:12px;
+    color:#666;
+}
+
+.card-actions{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+}
+
+.view-btn{
+    background:#4F8EF7;
+    color:white;
+    text-decoration:none;
+    padding:10px 18px;
+    border-radius:10px;
+}
+
+.delete-btn{
+    background:#EF4444;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:10px;
+    cursor:pointer;
+}

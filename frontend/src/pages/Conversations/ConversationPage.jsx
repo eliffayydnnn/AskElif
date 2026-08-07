@@ -2,56 +2,55 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/api";
 
-function KnowledgePage() {
-  const [knowledgeList, setKnowledgeList] = useState([]);
-  const [filteredList, setFilteredList] = useState([]);
+function ConversationPage() {
+  const [conversations, setConversations] = useState([]);
+  const [filteredConversations, setFilteredConversations] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
 
-  const fetchKnowledge = async () => {
-    try {
-      const response = await api.get("/Knowledge");
+  useEffect(() => {
+    fetchConversations();
+  }, []);
 
-      setKnowledgeList(response.data);
-      setFilteredList(response.data);
+  useEffect(() => {
+    const filtered = conversations.filter((conversation) =>
+      conversation.sessionId
+        .toLowerCase()
+        .includes(search.toLowerCase())
+    );
+
+    setFilteredConversations(filtered);
+  }, [search, conversations]);
+
+  const fetchConversations = async () => {
+    try {
+      const response = await api.get("/Conversation");
+
+      setConversations(response.data);
+      setFilteredConversations(response.data);
     } catch (error) {
       console.log(error);
+      alert("Konuşmalar yüklenemedi.");
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchKnowledge();
-  }, []);
-
-  useEffect(() => {
-    const result = knowledgeList.filter((item) => {
-      const title = item.title ?? "";
-      const category = item.category ?? "";
-
-      return (
-        title.toLowerCase().includes(search.toLowerCase()) ||
-        category.toLowerCase().includes(search.toLowerCase())
-      );
-    });
-
-    setFilteredList(result);
-  }, [search, knowledgeList]);
-
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Bu bilgiyi silmek istediğinize emin misiniz?"
+      "Bu konuşmayı silmek istediğinize emin misiniz?"
     );
 
     if (!confirmDelete) return;
 
     try {
-      await api.delete(`/Knowledge/${id}`);
+      await api.delete(`/Conversation/${id}`);
 
-      setKnowledgeList((prev) => prev.filter((item) => item.id !== id));
+      setConversations((prev) =>
+        prev.filter((item) => item.id !== id)
+      );
 
-      alert("Bilgi silindi.");
+      alert("Konuşma silindi.");
     } catch (error) {
       console.log(error);
       alert("Silme işlemi başarısız.");
@@ -64,52 +63,28 @@ function KnowledgePage() {
 
   return (
     <div style={{ padding: "40px" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "25px",
-        }}
-      >
-        <h1>Knowledge</h1>
-
-        <Link
-          to="/knowledge/create"
-          style={{
-            padding: "12px 20px",
-            background: "#E88AB2",
-            color: "#fff",
-            borderRadius: "8px",
-            textDecoration: "none",
-            fontWeight: "600",
-          }}
-        >
-          + Yeni Bilgi Ekle
-        </Link>
-      </div>
+      <h1>Conversations</h1>
 
       <input
         type="text"
-        placeholder="Bilgi ara..."
+        placeholder="Session Id ara..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         style={{
           width: "100%",
           padding: "12px",
+          margin: "25px 0",
           borderRadius: "8px",
           border: "1px solid #ddd",
-          marginBottom: "30px",
-          boxSizing: "border-box",
         }}
       />
 
-      {filteredList.length === 0 ? (
-        <p>Sonuç bulunamadı.</p>
+      {filteredConversations.length === 0 ? (
+        <p>Konuşma bulunamadı.</p>
       ) : (
-        filteredList.map((item) => (
+        filteredConversations.map((conversation) => (
           <div
-            key={item.id}
+            key={conversation.id}
             style={{
               border: "1px solid #ddd",
               borderRadius: "10px",
@@ -118,13 +93,19 @@ function KnowledgePage() {
               background: "#fff",
             }}
           >
-            <h3>{item.title}</h3>
+            <h3>Session</h3>
+
+            <p>{conversation.sessionId}</p>
 
             <p>
-              <strong>Kategori:</strong> {item.category}
+              <strong>Başlangıç:</strong>{" "}
+              {new Date(conversation.startedAt).toLocaleString("tr-TR")}
             </p>
 
-            <p>{item.content}</p>
+            <p>
+              <strong>Mesaj Sayısı:</strong>{" "}
+              {conversation.messages.length}
+            </p>
 
             <div
               style={{
@@ -134,7 +115,7 @@ function KnowledgePage() {
               }}
             >
               <Link
-                to={`/knowledge/edit/${item.id}`}
+                to={`/conversations/${conversation.id}`}
                 style={{
                   background: "#4F8EF7",
                   color: "#fff",
@@ -143,16 +124,16 @@ function KnowledgePage() {
                   textDecoration: "none",
                 }}
               >
-                Düzenle
+                Detay
               </Link>
 
               <button
-                onClick={() => handleDelete(item.id)}
+                onClick={() => handleDelete(conversation.id)}
                 style={{
                   background: "#EF4444",
                   color: "#fff",
-                  padding: "10px 16px",
                   border: "none",
+                  padding: "10px 16px",
                   borderRadius: "8px",
                   cursor: "pointer",
                 }}
@@ -167,4 +148,4 @@ function KnowledgePage() {
   );
 }
 
-export default KnowledgePage;
+export default ConversationPage;

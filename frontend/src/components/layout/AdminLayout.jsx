@@ -1,32 +1,17 @@
+import "../../styles/layout.css";
+
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
 
 function AdminLayout({ children }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "#FFF8FB",
-      }}
-    >
+    <div className="admin-layout">
       <Sidebar />
 
-      <div
-        style={{
-          flex: 1,
-          display: "flex",
-          flexDirection: "column",
-        }}
-      >
+      <div className="content">
         <Navbar />
 
-        <main
-          style={{
-            flex: 1,
-            padding: "30px",
-          }}
-        >
+        <main className="main-content">
           {children}
         </main>
       </div>

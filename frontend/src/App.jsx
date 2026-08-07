@@ -11,6 +11,8 @@ import EditKnowledgePage from "./pages/Knowledge/EditKnowledgePage";
 import ConversationPage from "./pages/Conversations/ConversationPage";
 import ConversationDetailPage from "./pages/Conversations/ConversationDetailPage";
 
+import UnknownQuestionsPage from "./pages/UnknownQuestions/UnknownQuestionsPage";
+
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import AdminLayout from "./components/layout/AdminLayout";
 
@@ -89,7 +91,19 @@ function App() {
         }
       />
 
-      {/* Bulunamayan sayfa */}
+      {/* Unknown Questions */}
+      <Route
+        path="/unknownquestions"
+        element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <UnknownQuestionsPage />
+            </AdminLayout>
+          </ProtectedRoute>
+        }
+      />
+
+      {/* 404 */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

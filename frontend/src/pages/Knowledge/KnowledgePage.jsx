@@ -1,25 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../../api/api";
+import "../../styles/knowledge.css";
 
 function KnowledgePage() {
   const [knowledgeList, setKnowledgeList] = useState([]);
   const [filteredList, setFilteredList] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
-
-  const fetchKnowledge = async () => {
-    try {
-      const response = await api.get("/Knowledge");
-
-      setKnowledgeList(response.data);
-      setFilteredList(response.data);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   useEffect(() => {
     fetchKnowledge();
@@ -38,6 +26,19 @@ function KnowledgePage() {
 
     setFilteredList(result);
   }, [search, knowledgeList]);
+
+  const fetchKnowledge = async () => {
+    try {
+      const response = await api.get("/Knowledge");
+
+      setKnowledgeList(response.data);
+      setFilteredList(response.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
@@ -63,106 +64,124 @@ function KnowledgePage() {
   }
 
   return (
-    <div style={{ padding: "40px" }}>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: "25px",
-        }}
-      >
-        <h1>Knowledge</h1>
+    <div className="knowledge-page">
+
+      <div className="knowledge-header">
+
+        <div>
+
+          <div className="knowledge-title">
+            📚 Knowledge Management
+          </div>
+
+          <div className="knowledge-subtitle">
+            Chatbot bilgisini buradan yönetebilirsin.
+          </div>
+
+        </div>
 
         <Link
           to="/knowledge/create"
-          style={{
-            padding: "12px 20px",
-            background: "#E88AB2",
-            color: "#fff",
-            borderRadius: "8px",
-            textDecoration: "none",
-            fontWeight: "600",
-          }}
+          className="add-button"
         >
-          + Yeni Bilgi Ekle
+          + Yeni Bilgi
         </Link>
+
       </div>
 
       <input
-        type="text"
-        placeholder="Bilgi ara..."
+        className="search-box"
+        placeholder="🔍 Başlık veya kategori ara..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        style={{
-          width: "100%",
-          padding: "12px",
-          borderRadius: "8px",
-          border: "1px solid #ddd",
-          marginBottom: "30px",
-          boxSizing: "border-box",
-        }}
       />
 
       {filteredList.length === 0 ? (
-        <p>Sonuç bulunamadı.</p>
+
+        <div className="empty-state">
+          Sonuç bulunamadı.
+        </div>
+
       ) : (
-        filteredList.map((item) => (
-          <div
-            key={item.id}
-            style={{
-              border: "1px solid #ddd",
-              borderRadius: "10px",
-              padding: "20px",
-              marginBottom: "20px",
-              background: "#fff",
-            }}
-          >
-            <h3>{item.title}</h3>
 
-            <p>
-              <strong>Kategori:</strong> {item.category}
-            </p>
+        <table className="knowledge-table">
 
-            <p>{item.content}</p>
+          <thead>
 
-            <div
-              style={{
-                display: "flex",
-                gap: "10px",
-                marginTop: "20px",
-              }}
-            >
-              <Link
-                to={`/knowledge/edit/${item.id}`}
-                style={{
-                  background: "#4F8EF7",
-                  color: "#fff",
-                  padding: "10px 16px",
-                  borderRadius: "8px",
-                  textDecoration: "none",
-                }}
-              >
-                Düzenle
-              </Link>
+            <tr>
 
-              <button
-                onClick={() => handleDelete(item.id)}
-                style={{
-                  background: "#EF4444",
-                  color: "#fff",
-                  padding: "10px 16px",
-                  border: "none",
-                  borderRadius: "8px",
-                  cursor: "pointer",
-                }}
-              >
-                Sil
-              </button>
-            </div>
-          </div>
-        ))
+              <th>Başlık</th>
+
+              <th>Kategori</th>
+
+              <th>Öncelik</th>
+
+              <th>Durum</th>
+
+              <th>İşlemler</th>
+
+            </tr>
+
+          </thead>
+
+          <tbody>
+
+            {filteredList.map((item) => (
+
+              <tr key={item.id}>
+
+                <td>
+                  <strong>{item.title || "-"}</strong>
+                </td>
+
+                <td>
+
+                  <span className="category-badge">
+                    {item.category}
+                  </span>
+
+                </td>
+
+                <td>
+                  {item.priority}
+                </td>
+
+                <td>
+                  {item.isPublished ? "✅ Yayında" : "📝 Taslak"}
+                </td>
+
+                <td>
+
+                  <div className="action-buttons">
+
+                    <Link
+                      to={`/knowledge/edit/${item.id}`}
+                      className="edit-btn"
+                    >
+                      Düzenle
+                    </Link>
+
+                    <button
+                      className="delete-btn"
+                      onClick={() => handleDelete(item.id)}
+                    >
+                      Sil
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            ))}
+
+          </tbody>
+
+        </table>
+
       )}
+
     </div>
   );
 }

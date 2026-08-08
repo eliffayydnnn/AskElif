@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from "react-router-dom";
 
 import LoginPage from "./pages/Login/LoginPage";
+import ChatPage from "./pages/Chat/ChatPage";
 
 import DashboardPage from "./pages/Dashboard/DashboardPage";
 
@@ -19,8 +20,18 @@ import AdminLayout from "./components/layout/AdminLayout";
 function App() {
   return (
     <Routes>
+
+      {/* Public Chatbot */}
+      <Route
+        path="/chat"
+        element={<ChatPage />}
+      />
+
       {/* Login */}
-      <Route path="/" element={<LoginPage />} />
+      <Route
+        path="/"
+        element={<LoginPage />}
+      />
 
       {/* Dashboard */}
       <Route
@@ -104,7 +115,11 @@ function App() {
       />
 
       {/* 404 */}
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route
+        path="*"
+        element={<Navigate to="/" replace />}
+      />
+
     </Routes>
   );
 }

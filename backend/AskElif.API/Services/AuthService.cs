@@ -27,36 +27,61 @@ public class AuthService : IAuthService
         if (admin == null)
             return null;
 
-        // Şimdilik düz metin karşılaştırıyoruz.
-        // Daha sonra BCrypt ile hash doğrulaması yapacağız.
-        if (admin.PasswordHash != request.Password)
+        // BCrypt ile şifre doğrulama
+        bool passwordValid = BCrypt.Net.BCrypt.Verify(
+            request.Password,
+            admin.PasswordHash
+        );
+
+        if (!passwordValid)
             return null;
 
         var claims = new List<Claim>
         {
-            new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
-            new Claim(ClaimTypes.Name, admin.FullName),
-            new Claim(ClaimTypes.Email, admin.Email)
+            new Claim(
+                ClaimTypes.NameIdentifier,
+                admin.Id.ToString()
+            ),
+
+            new Claim(
+                ClaimTypes.Name,
+                admin.FullName
+            ),
+
+            new Claim(
+                ClaimTypes.Email,
+                admin.Email
+            )
         };
 
         var key = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));
+            Encoding.UTF8.GetBytes(
+                _configuration["Jwt:Key"]!
+            )
+        );
 
         var credentials = new SigningCredentials(
             key,
-            SecurityAlgorithms.HmacSha256);
+            SecurityAlgorithms.HmacSha256
+        );
 
         var token = new JwtSecurityToken(
             issuer: _configuration["Jwt:Issuer"],
             audience: _configuration["Jwt:Audience"],
             claims: claims,
             expires: DateTime.UtcNow.AddMinutes(
-                Convert.ToDouble(_configuration["Jwt:ExpireMinutes"])),
-            signingCredentials: credentials);
+                Convert.ToDouble(
+                    _configuration["Jwt:ExpireMinutes"]
+                )
+            ),
+            signingCredentials: credentials
+        );
 
         return new LoginResponseDto
         {
-            Token = new JwtSecurityTokenHandler().WriteToken(token),
+            Token = new JwtSecurityTokenHandler()
+                .WriteToken(token),
+
             FullName = admin.FullName
         };
     }

@@ -120,7 +120,9 @@ body {
   margin: 0 6px;
 }
 
-/* Profil */
+/* =========================
+   PROFİL
+========================= */
 
 .profile {
   display: flex;
@@ -128,6 +130,12 @@ body {
   gap: 11px;
 
   padding-left: 4px;
+}
+
+.profile-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .profile-avatar {
@@ -150,17 +158,53 @@ body {
 .profile-name {
   font-size: 14px;
   font-weight: 700;
+
   color: #2d2830;
+
   white-space: nowrap;
 }
 
 .profile-role {
-  margin-top: 2px;
-
   font-size: 11px;
+
   color: #999;
 
   white-space: nowrap;
+}
+
+/* =========================
+   LOGOUT BUTTON
+========================= */
+
+.logout-button {
+  width: 40px;
+  height: 40px;
+
+  border: 1px solid #f1dce5;
+
+  background: #fff8fb;
+
+  border-radius: 11px;
+
+  color: #d96b96;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.logout-button:hover {
+  background: #fdebf3;
+
+  border-color: #f3cddd;
+
+  color: #c94f7f;
+
+  transform: translateY(-1px);
 }
 
 /* =========================
@@ -179,8 +223,7 @@ body {
 
 @media (max-width: 650px) {
   .profile-divider,
-  .profile-name,
-  .profile-role {
+  .profile-details {
     display: none;
   }
 

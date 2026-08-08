@@ -1,5 +1,5 @@
 /* =========================================
-   UNKNOWN QUESTIONS
+   UNKNOWN QUESTIONS PAGE
 ========================================= */
 
 .unknown-page {
@@ -8,7 +8,6 @@
   margin: 0 auto;
 }
 
-
 /* =========================================
    HEADER
 ========================================= */
@@ -16,6 +15,7 @@
 .unknown-header {
   display: flex;
   align-items: center;
+  justify-content: space-between;
 
   margin-bottom: 25px;
 }
@@ -23,7 +23,6 @@
 .unknown-heading {
   display: flex;
   align-items: center;
-
   gap: 14px;
 }
 
@@ -38,9 +37,9 @@
   border-radius: 14px;
 
   background: #fff0f6;
-  border: 1px solid #f4d7e4;
+  color: #df6696;
 
-  font-size: 20px;
+  border: 1px solid #f4d7e4;
 }
 
 .unknown-title {
@@ -59,7 +58,6 @@
 
   font-size: 12px;
 }
-
 
 /* =========================================
    TOOLBAR
@@ -90,7 +88,7 @@
 
   transform: translateY(-50%);
 
-  font-size: 13px;
+  color: #aaa0a8;
 
   pointer-events: none;
 }
@@ -99,20 +97,19 @@
   width: 100%;
   height: 44px;
 
-  padding: 0 15px 0 42px;
+  padding: 0 15px 0 43px;
 
-  box-sizing: border-box;
+  border: 1px solid #eadde4;
+
+  border-radius: 12px;
 
   background: #ffffff;
 
-  border: 1px solid #eadde4;
-  border-radius: 12px;
-
   color: #40373f;
 
-  font-family: "Inter", sans-serif;
-
   font-size: 12px;
+
+  box-sizing: border-box;
 
   transition:
     border-color 0.2s ease,
@@ -124,12 +121,12 @@
 }
 
 .unknown-search:focus {
-  outline: none;
-
   border-color: #e4a2bd;
 
   box-shadow:
     0 0 0 3px rgba(223, 102, 150, 0.08);
+
+  outline: none;
 }
 
 .unknown-count {
@@ -149,33 +146,35 @@
   font-size: 15px;
 }
 
-
 /* =========================================
-   QUESTION LIST
+   QUESTIONS LIST
 ========================================= */
 
 .unknown-list {
   display: flex;
+
   flex-direction: column;
 
   gap: 12px;
 }
-
 
 /* =========================================
    QUESTION CARD
 ========================================= */
 
 .unknown-card {
+  width: 100%;
+
   background: #ffffff;
 
   border: 1px solid #f0dce5;
+
   border-radius: 15px;
 
-  padding: 18px 20px;
-
   box-shadow:
-    0 5px 16px rgba(70, 40, 55, 0.035);
+    0 7px 20px rgba(70, 40, 55, 0.035);
+
+  overflow: hidden;
 
   transition:
     transform 0.2s ease,
@@ -186,16 +185,15 @@
 .unknown-card:hover {
   transform: translateY(-2px);
 
-  border-color: #e9c7d5;
+  border-color: #ead0dc;
 
   box-shadow:
-    0 9px 24px rgba(70, 40, 55, 0.07);
+    0 10px 25px rgba(70, 40, 55, 0.06);
 }
 
 .unknown-card.resolved {
-  background: #fcfffd;
+  border-color: #d9eee2;
 }
-
 
 /* =========================================
    CARD TOP
@@ -203,15 +201,13 @@
 
 .unknown-card-top {
   display: flex;
-  align-items: flex-start;
 
-  gap: 13px;
+  align-items: center;
+
+  gap: 14px;
+
+  padding: 18px 20px;
 }
-
-
-/* =========================================
-   QUESTION ICON
-========================================= */
 
 .question-icon {
   width: 38px;
@@ -226,16 +222,9 @@
   border-radius: 11px;
 
   background: #fff0f6;
+
   color: #df6696;
-
-  font-size: 15px;
-  font-weight: 750;
 }
-
-
-/* =========================================
-   QUESTION CONTENT
-========================================= */
 
 .question-content {
   flex: 1;
@@ -247,21 +236,19 @@
   color: #40373f;
 
   font-size: 13px;
-  font-weight: 650;
+
+  font-weight: 600;
 
   line-height: 1.5;
-
-  word-break: break-word;
 }
 
 .question-date {
-  margin-top: 6px;
+  margin-top: 5px;
 
   color: #aaa0a8;
 
   font-size: 10px;
 }
-
 
 /* =========================================
    STATUS
@@ -272,32 +259,49 @@
 
   align-items: center;
 
-  gap: 5px;
+  gap: 6px;
 
   flex-shrink: 0;
 
-  padding: 5px 9px;
+  padding: 6px 10px;
 
   border-radius: 999px;
 
   font-size: 10px;
-  font-weight: 650;
+
+  font-weight: 600;
+}
+
+.question-status span {
+  width: 18px;
+  height: 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
 }
 
 .question-status.pending {
-  background: #fff4e8;
-  color: #c68137;
+  background: #fff5e8;
+
+  color: #c77a28;
+}
+
+.question-status.pending span {
+  background: #f5d5a9;
 }
 
 .question-status.resolved {
   background: #eaf9f1;
+
   color: #269b61;
 }
 
-.question-status span {
-  font-weight: 750;
+.question-status.resolved span {
+  background: #ccebd9;
 }
-
 
 /* =========================================
    CARD FOOTER
@@ -305,11 +309,14 @@
 
 .unknown-card-footer {
   display: flex;
+
   align-items: center;
+
   justify-content: space-between;
 
-  margin-top: 17px;
-  padding-top: 14px;
+  padding: 12px 20px;
+
+  background: #fffafd;
 
   border-top: 1px solid #f5edf1;
 }
@@ -317,33 +324,43 @@
 .question-id {
   color: #aaa0a8;
 
-  font-size: 9px;
+  font-size: 10px;
+
+  font-weight: 500;
 }
-
-
-/* =========================================
-   ACTIONS
-========================================= */
 
 .unknown-actions {
   display: flex;
+
   align-items: center;
 
   gap: 7px;
 }
 
+/* =========================================
+   BUTTONS
+========================================= */
+
 .resolve-btn,
 .unknown-delete-btn {
-  height: 32px;
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  height: 31px;
 
   padding: 0 11px;
 
+  border: none;
+
   border-radius: 8px;
 
-  font-family: "Inter", sans-serif;
-
   font-size: 10px;
-  font-weight: 650;
+
+  font-weight: 600;
 
   cursor: pointer;
 
@@ -353,22 +370,20 @@
 }
 
 .resolve-btn {
-  border: none;
-
   background: #eaf9f1;
+
   color: #269b61;
 }
 
 .resolve-btn:hover {
-  background: #dcf5e7;
+  background: #d9f2e4;
 
   transform: translateY(-1px);
 }
 
 .unknown-delete-btn {
-  border: none;
-
   background: #fff0f1;
+
   color: #dc6870;
 }
 
@@ -378,25 +393,26 @@
   transform: translateY(-1px);
 }
 
-
 /* =========================================
    EMPTY STATE
 ========================================= */
 
 .unknown-empty {
-  min-height: 300px;
-
   display: flex;
+
   flex-direction: column;
 
   align-items: center;
   justify-content: center;
+
+  min-height: 300px;
 
   padding: 40px;
 
   background: #ffffff;
 
   border: 1px solid #f0dce5;
+
   border-radius: 17px;
 
   text-align: center;
@@ -420,8 +436,6 @@
   background: #fff0f6;
 
   color: #df6696;
-
-  font-size: 22px;
 }
 
 .unknown-empty h3 {
@@ -440,7 +454,6 @@
   font-size: 11px;
 }
 
-
 /* =========================================
    LOADING
 ========================================= */
@@ -449,12 +462,13 @@
   min-height: 400px;
 
   display: flex;
+
   flex-direction: column;
 
   align-items: center;
   justify-content: center;
 
-  gap: 12px;
+  gap: 14px;
 
   color: #988b94;
 
@@ -480,7 +494,6 @@
   }
 }
 
-
 /* =========================================
    RESPONSIVE
 ========================================= */
@@ -491,6 +504,8 @@
     align-items: flex-start;
 
     flex-direction: column;
+
+    gap: 12px;
   }
 
   .unknown-search-wrapper {
@@ -502,15 +517,17 @@
   }
 
   .unknown-card-top {
+    align-items: flex-start;
+
     flex-wrap: wrap;
   }
 
   .question-content {
-    width: calc(100% - 55px);
+    width: calc(100% - 52px);
   }
 
   .question-status {
-    margin-left: 51px;
+    margin-left: 52px;
   }
 
   .unknown-card-footer {
@@ -518,7 +535,7 @@
 
     flex-direction: column;
 
-    gap: 12px;
+    gap: 10px;
   }
 
   .unknown-actions {

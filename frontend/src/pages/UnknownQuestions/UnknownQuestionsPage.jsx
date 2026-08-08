@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Search, CircleHelp, Check, Trash2 } from "lucide-react";
 import api from "../../api/api";
 import "../../styles/unknownQuestions.css";
 
@@ -14,7 +15,7 @@ function UnknownQuestionsPage() {
 
   useEffect(() => {
     const filtered = questions.filter((item) =>
-      item.question
+      (item.question ?? "")
         .toLowerCase()
         .includes(search.toLowerCase())
     );
@@ -95,13 +96,12 @@ function UnknownQuestionsPage() {
     <div className="unknown-page">
 
       {/* HEADER */}
-
       <div className="unknown-header">
 
         <div className="unknown-heading">
 
           <div className="unknown-heading-icon">
-            ❓
+            <CircleHelp size={22} />
           </div>
 
           <div>
@@ -119,14 +119,14 @@ function UnknownQuestionsPage() {
       </div>
 
       {/* TOOLBAR */}
-
       <div className="unknown-toolbar">
 
         <div className="unknown-search-wrapper">
 
-          <span className="unknown-search-icon">
-            🔍
-          </span>
+          <Search
+            className="unknown-search-icon"
+            size={17}
+          />
 
           <input
             className="unknown-search"
@@ -140,19 +140,18 @@ function UnknownQuestionsPage() {
 
         <div className="unknown-count">
           <strong>{filteredQuestions.length}</strong>
-          soru
+          <span>soru</span>
         </div>
 
       </div>
 
       {/* QUESTIONS */}
-
       {filteredQuestions.length === 0 ? (
 
         <div className="unknown-empty">
 
           <div className="unknown-empty-icon">
-            ❓
+            <CircleHelp size={25} />
           </div>
 
           <h3>
@@ -181,7 +180,7 @@ function UnknownQuestionsPage() {
               <div className="unknown-card-top">
 
                 <div className="question-icon">
-                  ?
+                  <CircleHelp size={18} />
                 </div>
 
                 <div className="question-content">
@@ -206,7 +205,11 @@ function UnknownQuestionsPage() {
                   }`}
                 >
                   <span>
-                    {item.isResolved ? "✓" : "!"}
+                    {item.isResolved ? (
+                      <Check size={13} />
+                    ) : (
+                      "!"
+                    )}
                   </span>
 
                   {item.isResolved
@@ -231,7 +234,8 @@ function UnknownQuestionsPage() {
                         handleResolve(item.id)
                       }
                     >
-                      ✓ Çözüldü
+                      <Check size={14} />
+                      Çözüldü
                     </button>
                   )}
 
@@ -241,6 +245,7 @@ function UnknownQuestionsPage() {
                       handleDelete(item.id)
                     }
                   >
+                    <Trash2 size={14} />
                     Sil
                   </button>
 

@@ -1,7 +1,22 @@
-import { Bell, Settings, User } from "lucide-react";
+import { Bell, Settings, User, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/layout.css";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    const confirmLogout = window.confirm(
+      "Çıkış yapmak istediğinize emin misiniz?"
+    );
+
+    if (!confirmLogout) return;
+
+    localStorage.removeItem("token");
+
+    navigate("/");
+  };
+
   return (
     <header className="navbar">
 
@@ -29,7 +44,7 @@ function Navbar() {
             <User size={18} />
           </div>
 
-          <div>
+          <div className="profile-details">
             <div className="profile-name">
               Elif Aydın
             </div>
@@ -40,6 +55,14 @@ function Navbar() {
           </div>
 
         </div>
+
+        <button
+          className="logout-button"
+          onClick={handleLogout}
+          title="Çıkış Yap"
+        >
+          <LogOut size={18} />
+        </button>
 
       </div>
 

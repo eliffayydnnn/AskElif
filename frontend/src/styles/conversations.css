@@ -1,89 +1,569 @@
-.conversations-page{
-    padding:35px;
+/* =========================================
+   CONVERSATIONS PAGE
+========================================= */
+
+.conversations-page {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.conversations-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
+
+/* =========================================
+   HEADER
+========================================= */
+
+.conversations-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 25px;
 }
 
-.conversations-title{
-    font-size:32px;
-    font-weight:700;
-    color:#333;
+.conversations-heading {
+  display: flex;
+  align-items: center;
+
+  gap: 14px;
 }
 
-.conversations-subtitle{
-    color:#777;
-    margin-top:5px;
+.conversations-heading-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #fff0f6;
+  color: #df6696;
+
+  border: 1px solid #f4d7e4;
 }
 
-.conversation-search{
-    width:100%;
-    padding:15px 18px;
-    border-radius:12px;
-    border:1px solid #EAD3DE;
-    margin-bottom:30px;
-    outline:none;
+.conversations-title {
+  color: #302830;
+
+  font-size: 24px;
+  font-weight: 750;
+
+  letter-spacing: -0.4px;
 }
 
-.conversation-card{
-    background:white;
-    border:1px solid #F4D9E5;
-    border-radius:18px;
-    padding:24px;
-    margin-bottom:18px;
-    transition:.25s;
-    box-shadow:0 10px 25px rgba(0,0,0,.05);
+.conversations-subtitle {
+  margin-top: 5px;
+
+  color: #968a93;
+
+  font-size: 12px;
 }
 
-.conversation-card:hover{
-    transform:translateY(-3px);
-    box-shadow:0 18px 40px rgba(0,0,0,.08);
+
+/* =========================================
+   TOTAL
+========================================= */
+
+.conversation-total {
+  display: flex;
+  flex-direction: column;
+
+  align-items: flex-end;
+
+  gap: 2px;
 }
 
-.conversation-top{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.conversation-total strong {
+  color: #df6696;
+
+  font-size: 22px;
+  font-weight: 750;
 }
 
-.session-title{
-    font-weight:700;
-    color:#444;
+.conversation-total span {
+  color: #9b8e97;
+
+  font-size: 10px;
 }
 
-.session-date{
-    color:#888;
-    font-size:14px;
+
+/* =========================================
+   TOOLBAR
+========================================= */
+
+.conversation-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 18px;
 }
 
-.message-count{
-    margin-top:12px;
-    color:#666;
+.conversation-search-wrapper {
+  position: relative;
+
+  width: 100%;
+  max-width: 520px;
 }
 
-.card-actions{
-    margin-top:20px;
-    display:flex;
-    gap:10px;
+.conversation-search-icon {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #aaa0a8;
+
+  pointer-events: none;
 }
 
-.view-btn{
-    background:#4F8EF7;
-    color:white;
-    text-decoration:none;
-    padding:10px 18px;
-    border-radius:10px;
+.conversation-search {
+  width: 100%;
+
+  height: 44px;
+
+  padding: 0 15px 0 43px;
+
+  border: 1px solid #eadde4;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #40373f;
+
+  font-family: "Inter", sans-serif;
+
+  font-size: 12px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.delete-btn{
-    background:#EF4444;
-    color:white;
-    border:none;
-    padding:10px 18px;
-    border-radius:10px;
-    cursor:pointer;
+.conversation-search::placeholder {
+  color: #aaa0a8;
+}
+
+.conversation-search:focus {
+  outline: none;
+
+  border-color: #e4a2bd;
+
+  box-shadow:
+    0 0 0 3px rgba(223, 102, 150, 0.08);
+}
+
+.conversation-result-count {
+  color: #9b8e97;
+
+  font-size: 11px;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   LIST
+========================================= */
+
+.conversation-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 11px;
+}
+
+
+/* =========================================
+   CARD
+========================================= */
+
+.conversation-card {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding: 18px 20px;
+
+  background: #ffffff;
+
+  border: 1px solid #f0dce5;
+
+  border-radius: 15px;
+
+  box-shadow:
+    0 5px 18px rgba(70, 40, 55, 0.035);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.conversation-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #e8cbd8;
+
+  box-shadow:
+    0 9px 25px rgba(70, 40, 55, 0.07);
+}
+
+
+/* =========================================
+   CARD MAIN
+========================================= */
+
+.conversation-card-main {
+  display: flex;
+
+  align-items: center;
+
+  gap: 13px;
+
+  min-width: 0;
+}
+
+.conversation-icon {
+  width: 40px;
+  height: 40px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 11px;
+
+  background: #fff0f6;
+
+  color: #df6696;
+}
+
+.conversation-info {
+  min-width: 0;
+
+  display: flex;
+  flex-direction: column;
+
+  gap: 3px;
+}
+
+.session-title {
+  color: #40373f;
+
+  font-size: 13px;
+
+  font-weight: 650;
+}
+
+.session-id {
+  max-width: 430px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #8e828a;
+
+  font-family: "Inter", sans-serif;
+
+  font-size: 10px;
+}
+
+.session-date {
+  color: #aaa0a8;
+
+  font-size: 9px;
+}
+
+
+/* =========================================
+   RIGHT SIDE
+========================================= */
+
+.conversation-card-right {
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  flex-shrink: 0;
+}
+
+.message-count {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+
+  padding: 6px 9px;
+
+  border-radius: 8px;
+
+  background: #f7f3ff;
+
+  color: #7862c9;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  white-space: nowrap;
+}
+
+
+/* =========================================
+   ACTIONS
+========================================= */
+
+.card-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
+.view-btn,
+.delete-btn {
+  height: 32px;
+
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 6px;
+
+  padding: 0 11px;
+
+  border-radius: 8px;
+
+  font-family: "Inter", sans-serif;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.view-btn {
+  border: none;
+
+  background: #f0edff;
+
+  color: #7059c6;
+}
+
+.view-btn:hover {
+  background: #e7e1ff;
+
+  transform: translateY(-1px);
+}
+
+.delete-btn {
+  border: none;
+
+  background: #fff0f1;
+
+  color: #dc6870;
+}
+
+.delete-btn:hover {
+  background: #ffe2e4;
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.conversation-empty {
+  min-height: 300px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 40px;
+
+  background: #ffffff;
+
+  border: 1px solid #f0dce5;
+
+  border-radius: 17px;
+
+  text-align: center;
+
+  box-shadow:
+    0 7px 20px rgba(70, 40, 55, 0.035);
+}
+
+.conversation-empty-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  border-radius: 15px;
+
+  background: #fff0f6;
+
+  color: #df6696;
+}
+
+.conversation-empty h3 {
+  margin: 0 0 6px;
+
+  color: #40373f;
+
+  font-size: 16px;
+}
+
+.conversation-empty p {
+  margin: 0;
+
+  color: #9b8e97;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.conversation-loading {
+  min-height: 400px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  color: #988b94;
+
+  font-size: 12px;
+}
+
+.conversation-spinner {
+  width: 29px;
+  height: 29px;
+
+  border: 3px solid #f4dce7;
+
+  border-top-color: #df6696;
+
+  border-radius: 50%;
+
+  animation: conversation-spin 0.8s linear infinite;
+}
+
+@keyframes conversation-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 900px) {
+
+  .conversation-card {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .conversation-card-right {
+    width: 100%;
+
+    justify-content: space-between;
+  }
+
+}
+
+@media (max-width: 600px) {
+
+  .conversations-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .conversation-total {
+    align-items: flex-start;
+  }
+
+  .conversation-toolbar {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .conversation-search-wrapper {
+    max-width: none;
+  }
+
+  .conversation-card-right {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .card-actions {
+    width: 100%;
+  }
+
+  .view-btn,
+  .delete-btn {
+    flex: 1;
+  }
+
 }

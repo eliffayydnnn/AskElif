@@ -1,0 +1,479 @@
+/* =========================================
+   CREATE KNOWLEDGE PAGE
+========================================= */
+
+.create-knowledge-page {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+
+/* =========================================
+   HEADER
+========================================= */
+
+.create-knowledge-header {
+  margin-bottom: 25px;
+}
+
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+
+  padding: 0;
+  margin-bottom: 18px;
+
+  border: none;
+  background: transparent;
+
+  color: #9a8d96;
+
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: color 0.2s ease;
+}
+
+
+.back-button:hover {
+  color: #df6696;
+}
+
+
+.create-knowledge-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+
+.create-knowledge-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
+  background: #fff0f6;
+  color: #df6696;
+
+  border: 1px solid #f4d7e4;
+}
+
+
+.create-knowledge-heading h1 {
+  margin: 0;
+
+  color: #302830;
+
+  font-size: 24px;
+  font-weight: 750;
+
+  letter-spacing: -0.4px;
+}
+
+
+.create-knowledge-heading p {
+  margin: 5px 0 0;
+
+  color: #968a93;
+
+  font-size: 12px;
+}
+
+
+/* =========================================
+   MAIN LAYOUT
+========================================= */
+
+.create-knowledge-layout {
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) 300px;
+
+  gap: 20px;
+
+  align-items: start;
+}
+
+
+/* =========================================
+   FORM CARD
+========================================= */
+
+.create-knowledge-card {
+  background: #ffffff;
+
+  border: 1px solid #f0dce5;
+
+  border-radius: 17px;
+
+  padding: 28px;
+
+  box-shadow:
+    0 7px 20px rgba(70, 40, 55, 0.04);
+}
+
+
+/* =========================================
+   FORM GROUP
+========================================= */
+
+.form-group {
+  margin-bottom: 23px;
+}
+
+
+.form-group label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+
+  margin-bottom: 8px;
+
+  color: #443a42;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+
+.form-group label svg {
+  color: #df6696;
+}
+
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+
+  border: 1px solid #eadde4;
+
+  border-radius: 11px;
+
+  background: #ffffff;
+
+  color: #40373f;
+
+  font-family: inherit;
+
+  font-size: 12px;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  box-sizing: border-box;
+}
+
+
+.form-group input {
+  height: 44px;
+
+  padding: 0 13px;
+}
+
+
+.form-group textarea {
+  min-height: 170px;
+
+  padding: 13px;
+
+  resize: vertical;
+
+  line-height: 1.6;
+}
+
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #b1a6ad;
+}
+
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+
+  border-color: #e3a0bc;
+
+  box-shadow:
+    0 0 0 3px rgba(223, 102, 150, 0.08);
+}
+
+
+.form-hint {
+  display: block;
+
+  margin-top: 7px;
+
+  color: #a79ba2;
+
+  font-size: 10px;
+}
+
+
+/* =========================================
+   FORM BUTTONS
+========================================= */
+
+.form-actions {
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 9px;
+
+  padding-top: 8px;
+
+  border-top: 1px solid #f3e8ed;
+}
+
+
+.cancel-button,
+.save-button {
+  height: 39px;
+
+  padding: 0 15px;
+
+  border-radius: 9px;
+
+  font-family: inherit;
+
+  font-size: 11px;
+
+  font-weight: 650;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.cancel-button {
+  border: 1px solid #eadde4;
+
+  background: #ffffff;
+
+  color: #776b73;
+}
+
+
+.cancel-button:hover {
+  background: #fff8fb;
+
+  transform: translateY(-1px);
+}
+
+
+.save-button {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 7px;
+
+  border: none;
+
+  background: #df6696;
+
+  color: #ffffff;
+
+  box-shadow:
+    0 5px 14px rgba(223, 102, 150, 0.18);
+}
+
+
+.save-button:hover:not(:disabled) {
+  background: #d6578b;
+
+  transform: translateY(-1px);
+}
+
+
+.save-button:disabled,
+.cancel-button:disabled {
+  opacity: 0.6;
+
+  cursor: not-allowed;
+}
+
+
+/* =========================================
+   INFORMATION CARD
+========================================= */
+
+.create-knowledge-info {
+  padding: 23px;
+
+  background: linear-gradient(
+    145deg,
+    #fff7fa,
+    #ffffff
+  );
+
+  border: 1px solid #f0dce5;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 7px 20px rgba(70, 40, 55, 0.035);
+}
+
+
+.info-card-icon {
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  border-radius: 12px;
+
+  background: #fff0f6;
+
+  font-size: 19px;
+}
+
+
+.create-knowledge-info h3 {
+  margin: 0 0 7px;
+
+  color: #40373f;
+
+  font-size: 14px;
+}
+
+
+.create-knowledge-info > p {
+  margin: 0;
+
+  color: #968a93;
+
+  font-size: 10px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================
+   INFORMATION LIST
+========================================= */
+
+.info-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 15px;
+
+  margin-top: 22px;
+}
+
+
+.info-item {
+  display: flex;
+
+  gap: 10px;
+}
+
+
+.info-item > span {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  width: 25px;
+  height: 25px;
+
+  flex-shrink: 0;
+
+  border-radius: 7px;
+
+  background: #fff0f6;
+
+  color: #df6696;
+
+  font-size: 9px;
+  font-weight: 700;
+}
+
+
+.info-item strong {
+  display: block;
+
+  margin-bottom: 3px;
+
+  color: #51464e;
+
+  font-size: 10px;
+}
+
+
+.info-item p {
+  margin: 0;
+
+  color: #a1969d;
+
+  font-size: 9px;
+
+  line-height: 1.5;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 850px) {
+
+  .create-knowledge-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .create-knowledge-info {
+    order: 2;
+  }
+
+}
+
+
+@media (max-width: 600px) {
+
+  .create-knowledge-card {
+    padding: 20px;
+  }
+
+  .create-knowledge-heading h1 {
+    font-size: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .cancel-button,
+  .save-button {
+    width: 100%;
+  }
+
+}

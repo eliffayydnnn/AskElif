@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import {
+  Search,
+  Plus,
+  Pencil,
+  Trash2,
+  BookOpen,
+  FileText,
+  CheckCircle2,
+  Clock3,
+} from "lucide-react";
+
 import api from "../../api/api";
 import "../../styles/knowledge.css";
 
@@ -50,7 +61,9 @@ function KnowledgePage() {
     try {
       await api.delete(`/Knowledge/${id}`);
 
-      setKnowledgeList((prev) => prev.filter((item) => item.id !== id));
+      setKnowledgeList((prev) =>
+        prev.filter((item) => item.id !== id)
+      );
 
       alert("Bilgi silindi.");
     } catch (error) {
@@ -60,22 +73,34 @@ function KnowledgePage() {
   };
 
   if (loading) {
-    return <h2>Yükleniyor...</h2>;
+    return (
+      <div className="knowledge-loading">
+        <div className="knowledge-spinner"></div>
+        <p>Knowledge yükleniyor...</p>
+      </div>
+    );
   }
 
   return (
     <div className="knowledge-page">
 
+      {/* HEADER */}
       <div className="knowledge-header">
 
-        <div>
+        <div className="knowledge-heading">
 
-          <div className="knowledge-title">
-            📚 Knowledge Management
+          <div className="knowledge-heading-icon">
+            <BookOpen size={23} />
           </div>
 
-          <div className="knowledge-subtitle">
-            Chatbot bilgisini buradan yönetebilirsin.
+          <div>
+            <div className="knowledge-title">
+              Knowledge Management
+            </div>
+
+            <div className="knowledge-subtitle">
+              Chatbot'un bilgi tabanını buradan yönetebilirsin.
+            </div>
           </div>
 
         </div>
@@ -84,101 +109,190 @@ function KnowledgePage() {
           to="/knowledge/create"
           className="add-button"
         >
-          + Yeni Bilgi
+          <Plus size={18} />
+          Yeni Bilgi
         </Link>
 
       </div>
 
-      <input
-        className="search-box"
-        placeholder="🔍 Başlık veya kategori ara..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
 
+      {/* SEARCH + COUNT */}
+      <div className="knowledge-toolbar">
+
+        <div className="search-wrapper">
+
+          <Search
+            size={18}
+            className="search-icon"
+          />
+
+          <input
+            className="search-box"
+            type="text"
+            placeholder="Başlık veya kategori ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+        </div>
+
+        <div className="knowledge-count">
+          <strong>{filteredList.length}</strong>
+          <span>bilgi</span>
+        </div>
+
+      </div>
+
+
+      {/* TABLE */}
       {filteredList.length === 0 ? (
 
         <div className="empty-state">
-          Sonuç bulunamadı.
+
+          <div className="empty-icon">
+            <FileText size={28} />
+          </div>
+
+          <h3>Sonuç bulunamadı</h3>
+
+          <p>
+            Arama kriterlerine uygun herhangi bir bilgi bulunamadı.
+          </p>
+
         </div>
 
       ) : (
 
-        <table className="knowledge-table">
+        <div className="knowledge-table-wrapper">
 
-          <thead>
+          <table className="knowledge-table">
 
-            <tr>
+            <thead>
 
-              <th>Başlık</th>
-
-              <th>Kategori</th>
-
-              <th>Öncelik</th>
-
-              <th>Durum</th>
-
-              <th>İşlemler</th>
-
-            </tr>
-
-          </thead>
-
-          <tbody>
-
-            {filteredList.map((item) => (
-
-              <tr key={item.id}>
-
-                <td>
-                  <strong>{item.title || "-"}</strong>
-                </td>
-
-                <td>
-
-                  <span className="category-badge">
-                    {item.category}
-                  </span>
-
-                </td>
-
-                <td>
-                  {item.priority}
-                </td>
-
-                <td>
-                  {item.isPublished ? "✅ Yayında" : "📝 Taslak"}
-                </td>
-
-                <td>
-
-                  <div className="action-buttons">
-
-                    <Link
-                      to={`/knowledge/edit/${item.id}`}
-                      className="edit-btn"
-                    >
-                      Düzenle
-                    </Link>
-
-                    <button
-                      className="delete-btn"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      Sil
-                    </button>
-
-                  </div>
-
-                </td>
-
+              <tr>
+                <th>Bilgi</th>
+                <th>Kategori</th>
+                <th>Öncelik</th>
+                <th>Durum</th>
+                <th>İşlemler</th>
               </tr>
 
-            ))}
+            </thead>
 
-          </tbody>
+            <tbody>
 
-        </table>
+              {filteredList.map((item) => (
+
+                <tr key={item.id}>
+
+                  {/* TITLE */}
+                  <td>
+
+                    <div className="knowledge-info">
+
+                      <div className="knowledge-item-icon">
+                        <FileText size={17} />
+                      </div>
+
+                      <div>
+
+                        <strong>
+                          {item.title || "Başlıksız bilgi"}
+                        </strong>
+
+                        {item.content && (
+                          <span>
+                            {item.content.length > 70
+                              ? `${item.content.substring(0, 70)}...`
+                              : item.content}
+                          </span>
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  </td>
+
+
+                  {/* CATEGORY */}
+                  <td>
+
+                    <span className="category-badge">
+                      {item.category || "Genel"}
+                    </span>
+
+                  </td>
+
+
+                  {/* PRIORITY */}
+                  <td>
+
+                    <span className="priority-value">
+                      {item.priority ?? "-"}
+                    </span>
+
+                  </td>
+
+
+                  {/* STATUS */}
+                  <td>
+
+                    {item.isPublished ? (
+
+                      <span className="status-badge published">
+                        <CheckCircle2 size={14} />
+                        Yayında
+                      </span>
+
+                    ) : (
+
+                      <span className="status-badge draft">
+                        <Clock3 size={14} />
+                        Taslak
+                      </span>
+
+                    )}
+
+                  </td>
+
+
+                  {/* ACTIONS */}
+                  <td>
+
+                    <div className="action-buttons">
+
+                      <Link
+                        to={`/knowledge/edit/${item.id}`}
+                        className="edit-btn"
+                        title="Düzenle"
+                      >
+                        <Pencil size={15} />
+                        Düzenle
+                      </Link>
+
+                      <button
+                        className="delete-btn"
+                        onClick={() => handleDelete(item.id)}
+                        title="Sil"
+                      >
+                        <Trash2 size={15} />
+                        Sil
+                      </button>
+
+                    </div>
+
+                  </td>
+
+                </tr>
+
+              ))}
+
+            </tbody>
+
+          </table>
+
+        </div>
 
       )}
 

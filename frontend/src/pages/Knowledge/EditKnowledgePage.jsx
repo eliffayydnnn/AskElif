@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api/api";
+import "../../styles/editKnowledge.css";
 
 function EditKnowledgePage() {
   const { id } = useParams();
@@ -13,6 +14,7 @@ function EditKnowledgePage() {
   const [tags, setTags] = useState("");
   const [priority, setPriority] = useState(1);
   const [isPublished, setIsPublished] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchKnowledge = async () => {
@@ -27,16 +29,18 @@ function EditKnowledgePage() {
 
         const data = response.data;
 
-        setTitle(data.title);
-        setCategory(data.category);
-        setContent(data.content);
-        setSource(data.source);
-        setTags(data.tags);
-        setPriority(data.priority);
-        setIsPublished(data.isPublished);
+        setTitle(data.title ?? "");
+        setCategory(data.category ?? "");
+        setContent(data.content ?? "");
+        setSource(data.source ?? "");
+        setTags(data.tags ?? "");
+        setPriority(data.priority ?? 1);
+        setIsPublished(data.isPublished ?? true);
       } catch (error) {
         console.log(error);
         alert("Bilgi yüklenemedi.");
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -67,106 +71,191 @@ function EditKnowledgePage() {
         }
       );
 
-      alert("Bilgi güncellendi.");
+      alert("Bilgi başarıyla güncellendi.");
 
       navigate("/knowledge");
     } catch (error) {
       console.log(error);
       console.log(error.response?.data);
+
       alert("Güncelleme başarısız.");
     }
   };
 
+  if (loading) {
+    return (
+      <div className="edit-knowledge-loading">
+        <div className="edit-knowledge-spinner"></div>
+        <span>Bilgi yükleniyor...</span>
+      </div>
+    );
+  }
+
   return (
-    <div style={{ maxWidth: "700px", margin: "0 auto" }}>
-      <h1>Bilgi Güncelle</h1>
+    <div className="edit-knowledge-page">
 
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: "20px" }}>
-          <label>Başlık</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginTop: "8px" }}
-          />
-        </div>
+      <div className="edit-knowledge-header">
+        <div>
+          <h1 className="edit-knowledge-title">
+            Bilgi Güncelle
+          </h1>
 
-        <div style={{ marginBottom: "20px" }}>
-          <label>Kategori</label>
-          <input
-            type="text"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginTop: "8px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label>İçerik</label>
-          <textarea
-            rows="6"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginTop: "8px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label>Kaynak</label>
-          <input
-            type="text"
-            value={source}
-            onChange={(e) => setSource(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginTop: "8px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label>Etiketler</label>
-          <input
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            style={{ width: "100%", padding: "12px", marginTop: "8px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "20px" }}>
-          <label>Öncelik</label>
-          <input
-            type="number"
-            value={priority}
-            onChange={(e) => setPriority(Number(e.target.value))}
-            style={{ width: "100%", padding: "12px", marginTop: "8px" }}
-          />
-        </div>
-
-        <div style={{ marginBottom: "30px" }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={isPublished}
-              onChange={(e) => setIsPublished(e.target.checked)}
-            />{" "}
-            Yayında
-          </label>
+          <p className="edit-knowledge-subtitle">
+            Mevcut bilgi kaydını düzenleyebilir ve güncelleyebilirsin.
+          </p>
         </div>
 
         <button
-          type="submit"
-          style={{
-            padding: "12px 24px",
-            background: "#E88AB2",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer",
-          }}
+          type="button"
+          className="back-button"
+          onClick={() => navigate("/knowledge")}
         >
-          Güncelle
+          ← Knowledge
         </button>
-      </form>
+      </div>
+
+      <div className="edit-knowledge-card">
+
+        <form onSubmit={handleSubmit}>
+
+          <div className="edit-form-group">
+            <label htmlFor="title">
+              Başlık
+            </label>
+
+            <input
+              id="title"
+              type="text"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              placeholder="Bilginin başlığını girin..."
+            />
+          </div>
+
+          <div className="edit-form-group">
+            <label htmlFor="category">
+              Kategori
+            </label>
+
+            <input
+              id="category"
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder="Örneğin: Eğitim, Yetenekler, Deneyim..."
+            />
+          </div>
+
+          <div className="edit-form-group">
+            <label htmlFor="content">
+              İçerik
+            </label>
+
+            <textarea
+              id="content"
+              rows="8"
+              value={content}
+              onChange={(e) => setContent(e.target.value)}
+              placeholder="Bilginin içeriğini girin..."
+            />
+          </div>
+
+          <div className="edit-form-row">
+
+            <div className="edit-form-group">
+              <label htmlFor="source">
+                Kaynak
+              </label>
+
+              <input
+                id="source"
+                type="text"
+                value={source}
+                onChange={(e) => setSource(e.target.value)}
+                placeholder="Bilginin kaynağı..."
+              />
+            </div>
+
+            <div className="edit-form-group">
+              <label htmlFor="tags">
+                Etiketler
+              </label>
+
+              <input
+                id="tags"
+                type="text"
+                value={tags}
+                onChange={(e) => setTags(e.target.value)}
+                placeholder="Örn: .NET, C#, Backend"
+              />
+            </div>
+
+          </div>
+
+          <div className="edit-form-row">
+
+            <div className="edit-form-group">
+              <label htmlFor="priority">
+                Öncelik
+              </label>
+
+              <input
+                id="priority"
+                type="number"
+                min="1"
+                value={priority}
+                onChange={(e) => setPriority(Number(e.target.value))}
+              />
+            </div>
+
+            <div className="publish-option">
+
+              <div>
+                <div className="publish-title">
+                  Yayın Durumu
+                </div>
+
+                <div className="publish-description">
+                  Bu bilgi chatbot tarafından kullanılabilir.
+                </div>
+              </div>
+
+              <label className="switch">
+                <input
+                  type="checkbox"
+                  checked={isPublished}
+                  onChange={(e) => setIsPublished(e.target.checked)}
+                />
+
+                <span className="slider"></span>
+              </label>
+
+            </div>
+
+          </div>
+
+          <div className="edit-form-actions">
+
+            <button
+              type="button"
+              className="edit-cancel-button"
+              onClick={() => navigate("/knowledge")}
+            >
+              İptal
+            </button>
+
+            <button
+              type="submit"
+              className="edit-save-button"
+            >
+              Değişiklikleri Kaydet
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
     </div>
   );
 }

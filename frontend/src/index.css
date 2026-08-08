@@ -1,94 +1,91 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
+@import "@fontsource/inter/400.css";
+@import "@fontsource/inter/500.css";
+@import "@fontsource/inter/600.css";
+@import "@fontsource/inter/700.css";
+
+/* =========================
+   GLOBAL RESET
+========================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-html{
-    scroll-behavior:smooth;
+html {
+  scroll-behavior: smooth;
 }
 
-body{
+body {
+  font-family: "Inter", "Segoe UI", sans-serif;
+  background: #fff8fb;
+  color: #444;
 
-    font-family:"Inter",sans-serif;
-
-    background:#FFF8FB;
-
-    color:#444;
-
-    -webkit-font-smoothing:antialiased;
-
-    -moz-osx-font-smoothing:grayscale;
-
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-#root{
-
-    min-height:100vh;
-
+#root {
+  min-height: 100vh;
 }
 
-a{
+/* =========================
+   LINKS
+========================= */
 
-    color:inherit;
-
-    text-decoration:none;
-
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-button{
+/* =========================
+   FORM ELEMENTS
+========================= */
 
-    font-family:inherit;
-
-}
-
+button,
 input,
 textarea,
-select,
-button{
+select {
+  font-family: inherit;
+}
 
-    font-family:inherit;
-
+button {
+  cursor: pointer;
 }
 
 input:focus,
 textarea:focus,
-select:focus{
-
-    outline:none;
-
+select:focus {
+  outline: none;
 }
 
-::-webkit-scrollbar{
+/* =========================
+   SCROLLBAR
+========================= */
 
-    width:10px;
-
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-::-webkit-scrollbar-track{
-
-    background:#FFF3F8;
-
+::-webkit-scrollbar-track {
+  background: #fff3f8;
 }
 
-::-webkit-scrollbar-thumb{
-
-    background:#E6A5C0;
-
-    border-radius:20px;
-
+::-webkit-scrollbar-thumb {
+  background: #e6a5c0;
+  border-radius: 20px;
 }
 
-::-webkit-scrollbar-thumb:hover{
-
-    background:#D97CA8;
-
+::-webkit-scrollbar-thumb:hover {
+  background: #d97ca8;
 }
 
-::selection{
+/* =========================
+   TEXT SELECTION
+========================= */
 
-    background:#F8C8DD;
-
-    color:#333;
-
+::selection {
+  background: #f8c8dd;
+  color: #333;
 }

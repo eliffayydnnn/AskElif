@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { MessageCircle, Search, Eye, Trash2 } from "lucide-react";
 import api from "../../api/api";
 import "../../styles/conversations.css";
 
@@ -16,7 +17,7 @@ function ConversationPage() {
   useEffect(() => {
     const filtered = conversations.filter((conversation) =>
       conversation.sessionId
-        .toLowerCase()
+        ?.toLowerCase()
         .includes(search.toLowerCase())
     );
 
@@ -59,93 +60,168 @@ function ConversationPage() {
   };
 
   if (loading) {
-    return <h2>Yükleniyor...</h2>;
+    return (
+      <div className="conversation-loading">
+        <div className="conversation-spinner"></div>
+        <span>Konuşmalar yükleniyor...</span>
+      </div>
+    );
   }
 
   return (
     <div className="conversations-page">
 
+      {/* HEADER */}
       <div className="conversations-header">
 
-        <div>
+        <div className="conversations-heading">
 
-          <div className="conversations-title">
-            💬 Conversations
+          <div className="conversations-heading-icon">
+            <MessageCircle size={22} />
           </div>
 
-          <div className="conversations-subtitle">
-            Kullanıcıların chatbot ile yaptığı konuşmaları inceleyebilirsin.
+          <div>
+            <div className="conversations-title">
+              Conversations
+            </div>
+
+            <div className="conversations-subtitle">
+              Kullanıcıların chatbot ile yaptığı konuşmaları inceleyebilirsin.
+            </div>
           </div>
 
+        </div>
+
+        <div className="conversation-total">
+          <strong>{conversations.length}</strong>
+          <span>Toplam Konuşma</span>
         </div>
 
       </div>
 
-      <input
-        className="conversation-search"
-        placeholder="🔍 Session ID ara..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
 
+      {/* SEARCH */}
+      <div className="conversation-toolbar">
+
+        <div className="conversation-search-wrapper">
+
+          <Search
+            size={17}
+            className="conversation-search-icon"
+          />
+
+          <input
+            className="conversation-search"
+            type="text"
+            placeholder="Session ID ara..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+        </div>
+
+        <div className="conversation-result-count">
+          {filteredConversations.length} sonuç
+        </div>
+
+      </div>
+
+
+      {/* CONTENT */}
       {filteredConversations.length === 0 ? (
 
-        <div className="empty-state">
-          Konuşma bulunamadı.
+        <div className="conversation-empty">
+
+          <div className="conversation-empty-icon">
+            <MessageCircle size={26} />
+          </div>
+
+          <h3>
+            Konuşma bulunamadı
+          </h3>
+
+          <p>
+            Arama kriterlerinize uygun herhangi bir konuşma bulunamadı.
+          </p>
+
         </div>
 
       ) : (
 
-        filteredConversations.map((conversation) => (
+        <div className="conversation-list">
 
-          <div
-            key={conversation.id}
-            className="conversation-card"
-          >
+          {filteredConversations.map((conversation) => (
 
-            <div className="conversation-top">
+            <div
+              key={conversation.id}
+              className="conversation-card"
+            >
 
-              <div>
+              <div className="conversation-card-main">
 
-                <div className="session-title">
-                  👤 Session #{conversation.id}
+                <div className="conversation-icon">
+                  <MessageCircle size={19} />
                 </div>
 
-                <div className="session-date">
-                  {new Date(
-                    conversation.startedAt
-                  ).toLocaleString("tr-TR")}
+                <div className="conversation-info">
+
+                  <div className="session-title">
+                    Session #{conversation.id}
+                  </div>
+
+                  <div className="session-id">
+                    {conversation.sessionId}
+                  </div>
+
+                  <div className="session-date">
+                    {new Date(
+                      conversation.startedAt
+                    ).toLocaleString("tr-TR")}
+                  </div>
+
                 </div>
 
               </div>
 
-              <div className="message-count">
-                💬 {conversation.messages.length} Mesaj
+
+              <div className="conversation-card-right">
+
+                <div className="message-count">
+                  <MessageCircle size={15} />
+                  <span>
+                    {conversation.messages?.length ?? 0} Mesaj
+                  </span>
+                </div>
+
+                <div className="card-actions">
+
+                  <Link
+                    to={`/conversations/${conversation.id}`}
+                    className="view-btn"
+                  >
+                    <Eye size={15} />
+                    Görüntüle
+                  </Link>
+
+                  <button
+                    className="delete-btn"
+                    onClick={() =>
+                      handleDelete(conversation.id)
+                    }
+                  >
+                    <Trash2 size={15} />
+                    Sil
+                  </button>
+
+                </div>
+
               </div>
 
             </div>
 
-            <div className="card-actions">
+          ))}
 
-              <Link
-                to={`/conversations/${conversation.id}`}
-                className="view-btn"
-              >
-                Görüntüle
-              </Link>
-
-              <button
-                className="delete-btn"
-                onClick={() => handleDelete(conversation.id)}
-              >
-                Sil
-              </button>
-
-            </div>
-
-          </div>
-
-        ))
+        </div>
 
       )}
 

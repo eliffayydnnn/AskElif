@@ -1,139 +1,633 @@
-/* PAGE */
+/* =========================================
+   KNOWLEDGE PAGE
+========================================= */
 
-.knowledge-page{
-    padding:35px;
+.knowledge-page {
+  width: 100%;
+  max-width: 1500px;
+  margin: 0 auto;
 }
 
-/* HEADER */
 
-.knowledge-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:30px;
+/* =========================================
+   HEADER
+========================================= */
+
+.knowledge-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  margin-bottom: 25px;
 }
 
-.knowledge-title{
-    font-size:32px;
-    font-weight:700;
-    color:#333;
+
+.knowledge-heading {
+  display: flex;
+  align-items: center;
+  gap: 14px;
 }
 
-.knowledge-subtitle{
-    color:#777;
-    margin-top:6px;
+
+.knowledge-heading-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 14px;
+
+  background: #fff0f6;
+  color: #df6696;
+
+  border: 1px solid #f4d7e4;
 }
 
-/* BUTTON */
 
-.add-button{
-    background:#E26D9F;
-    color:white;
-    text-decoration:none;
-    padding:14px 22px;
-    border-radius:12px;
-    font-weight:600;
-    transition:.25s;
+.knowledge-title {
+  color: #302830;
+
+  font-size: 24px;
+  font-weight: 750;
+
+  letter-spacing: -0.4px;
 }
 
-.add-button:hover{
-    background:#cf5a8b;
+
+.knowledge-subtitle {
+  margin-top: 5px;
+
+  color: #968a93;
+
+  font-size: 12px;
 }
 
-/* SEARCH */
 
-.search-box{
-    width:100%;
-    padding:15px 18px;
-    border-radius:12px;
-    border:1px solid #EAD3DE;
-    background:white;
-    margin-bottom:25px;
-    outline:none;
-    font-size:15px;
+/* =========================================
+   ADD BUTTON
+========================================= */
+
+.add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 8px;
+
+  padding: 11px 17px;
+
+  background: #df6696;
+  color: #ffffff;
+
+  border-radius: 11px;
+
+  font-size: 12px;
+  font-weight: 650;
+
+  box-shadow:
+    0 6px 15px rgba(223, 102, 150, 0.20);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.search-box:focus{
-    border-color:#E26D9F;
+
+.add-button:hover {
+  background: #d6578b;
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 9px 20px rgba(223, 102, 150, 0.25);
 }
 
-/* TABLE */
 
-.knowledge-table{
-    width:100%;
-    border-collapse:collapse;
-    background:white;
-    border-radius:18px;
-    overflow:hidden;
-    box-shadow:0 10px 30px rgba(0,0,0,.05);
+/* =========================================
+   TOOLBAR
+========================================= */
+
+.knowledge-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 17px;
 }
 
-.knowledge-table thead{
-    background:#FFF2F7;
+
+.search-wrapper {
+  position: relative;
+
+  width: 100%;
+  max-width: 500px;
 }
 
-.knowledge-table th{
-    text-align:left;
-    padding:18px;
-    color:#555;
+
+.search-icon {
+  position: absolute;
+
+  left: 14px;
+  top: 50%;
+
+  transform: translateY(-50%);
+
+  color: #aaa0a8;
+
+  pointer-events: none;
 }
 
-.knowledge-table td{
-    padding:18px;
-    border-top:1px solid #F5F5F5;
+
+.search-box {
+  width: 100%;
+
+  height: 44px;
+
+  padding: 0 15px 0 43px;
+
+  border: 1px solid #eadde4;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  color: #40373f;
+
+  font-size: 12px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
-.knowledge-table tbody tr:hover{
-    background:#FFF9FC;
+
+.search-box::placeholder {
+  color: #aaa0a8;
 }
 
-/* BADGE */
 
-.category-badge{
-    background:#FCE7F1;
-    color:#C65D7B;
-    padding:6px 12px;
-    border-radius:20px;
-    font-size:13px;
-    font-weight:600;
+.search-box:focus {
+  border-color: #e4a2bd;
+
+  box-shadow:
+    0 0 0 3px rgba(223, 102, 150, 0.08);
 }
 
-/* ACTIONS */
 
-.action-buttons{
-    display:flex;
-    gap:10px;
+.knowledge-count {
+  display: flex;
+  align-items: center;
+
+  gap: 5px;
+
+  color: #9b8e97;
+
+  font-size: 11px;
 }
+
+
+.knowledge-count strong {
+  color: #df6696;
+
+  font-size: 15px;
+}
+
+
+/* =========================================
+   TABLE
+========================================= */
+
+.knowledge-table-wrapper {
+  width: 100%;
+
+  overflow-x: auto;
+
+  background: #ffffff;
+
+  border: 1px solid #f0dce5;
+
+  border-radius: 17px;
+
+  box-shadow:
+    0 7px 20px rgba(70, 40, 55, 0.04);
+}
+
+
+.knowledge-table {
+  width: 100%;
+
+  border-collapse: collapse;
+
+  min-width: 800px;
+}
+
+
+.knowledge-table thead {
+  background: #fff8fb;
+}
+
+
+.knowledge-table th {
+  padding: 14px 18px;
+
+  text-align: left;
+
+  color: #968a93;
+
+  font-size: 10px;
+  font-weight: 650;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.5px;
+
+  border-bottom: 1px solid #f1e5eb;
+}
+
+
+.knowledge-table td {
+  padding: 17px 18px;
+
+  color: #625861;
+
+  font-size: 12px;
+
+  border-bottom: 1px solid #f5edf1;
+
+  vertical-align: middle;
+}
+
+
+.knowledge-table tbody tr {
+  transition:
+    background 0.2s ease;
+}
+
+
+.knowledge-table tbody tr:hover {
+  background: #fffafd;
+}
+
+
+.knowledge-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+
+/* =========================================
+   KNOWLEDGE INFO
+========================================= */
+
+.knowledge-info {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  min-width: 230px;
+}
+
+
+.knowledge-item-icon {
+  width: 36px;
+  height: 36px;
+
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #fff0f6;
+
+  color: #df6696;
+}
+
+
+.knowledge-info > div:last-child {
+  display: flex;
+  flex-direction: column;
+
+  gap: 4px;
+}
+
+
+.knowledge-info strong {
+  color: #40373f;
+
+  font-size: 12px;
+  font-weight: 650;
+}
+
+
+.knowledge-info span {
+  max-width: 280px;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+
+  color: #a3979f;
+
+  font-size: 10px;
+}
+
+
+/* =========================================
+   CATEGORY
+========================================= */
+
+.category-badge {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 5px 9px;
+
+  background: #f5f0ff;
+
+  color: #7862c9;
+
+  border-radius: 7px;
+
+  font-size: 10px;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   PRIORITY
+========================================= */
+
+.priority-value {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-width: 25px;
+
+  color: #625861;
+
+  font-weight: 600;
+}
+
+
+/* =========================================
+   STATUS
+========================================= */
+
+.status-badge {
+  display: inline-flex;
+
+  align-items: center;
+
+  gap: 5px;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+
+  font-weight: 600;
+}
+
+
+.status-badge.published {
+  background: #eaf9f1;
+
+  color: #269b61;
+}
+
+
+.status-badge.draft {
+  background: #f3f0f2;
+
+  color: #8c8089;
+}
+
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.action-buttons {
+  display: flex;
+
+  align-items: center;
+
+  gap: 7px;
+}
+
 
 .edit-btn,
-.delete-btn{
-    border:none;
-    cursor:pointer;
-    padding:9px 14px;
-    border-radius:8px;
-    text-decoration:none;
-    color:white;
-    font-size:14px;
+.delete-btn {
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 6px;
+
+  height: 32px;
+
+  padding: 0 10px;
+
+  border-radius: 8px;
+
+  font-size: 10px;
+
+  font-weight: 600;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
 }
 
-.edit-btn{
-    background:#4F8EF7;
+
+.edit-btn {
+  background: #f0edff;
+
+  color: #7059c6;
 }
 
-.delete-btn{
-    background:#EF4444;
+
+.edit-btn:hover {
+  background: #e7e1ff;
+
+  transform: translateY(-1px);
 }
 
-.edit-btn:hover{
-    background:#3477e8;
+
+.delete-btn {
+  border: none;
+
+  background: #fff0f1;
+
+  color: #dc6870;
 }
 
-.delete-btn:hover{
-    background:#dc2626;
+
+.delete-btn:hover {
+  background: #ffe2e4;
+
+  transform: translateY(-1px);
 }
 
-.empty-state{
-    padding:40px;
-    text-align:center;
-    color:#888;
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.empty-state {
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  min-height: 300px;
+
+  padding: 40px;
+
+  background: #ffffff;
+
+  border: 1px solid #f0dce5;
+
+  border-radius: 17px;
+
+  text-align: center;
+
+  box-shadow:
+    0 7px 20px rgba(70, 40, 55, 0.035);
+}
+
+
+.empty-icon {
+  width: 55px;
+  height: 55px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-bottom: 14px;
+
+  border-radius: 15px;
+
+  background: #fff0f6;
+
+  color: #df6696;
+}
+
+
+.empty-state h3 {
+  margin: 0 0 6px;
+
+  color: #40373f;
+
+  font-size: 16px;
+}
+
+
+.empty-state p {
+  margin: 0;
+
+  color: #9b8e97;
+
+  font-size: 11px;
+}
+
+
+/* =========================================
+   LOADING
+========================================= */
+
+.knowledge-loading {
+  min-height: 400px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 14px;
+
+  color: #988b94;
+
+  font-size: 12px;
+}
+
+
+.knowledge-spinner {
+  width: 29px;
+  height: 29px;
+
+  border: 3px solid #f4dce7;
+
+  border-top-color: #df6696;
+
+  border-radius: 50%;
+
+  animation: knowledge-spin 0.8s linear infinite;
+}
+
+
+@keyframes knowledge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 750px) {
+
+  .knowledge-header {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 18px;
+  }
+
+  .add-button {
+    width: 100%;
+  }
+
+  .knowledge-toolbar {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+  .search-wrapper {
+    max-width: none;
+  }
+
+  .knowledge-count {
+    margin-left: 3px;
+  }
+
 }

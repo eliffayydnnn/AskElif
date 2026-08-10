@@ -25,6 +25,7 @@ builder.Services.AddScoped<IKnowledgeService, KnowledgeService>();
 builder.Services.AddScoped<IKnowledgeSearchService, KnowledgeSearchService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<GeminiService>();
 
 builder.Services.AddCors(options =>
 {

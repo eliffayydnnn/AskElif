@@ -12,7 +12,7 @@ public class KnowledgeSearchService : IKnowledgeSearchService
         _knowledgeRepository = knowledgeRepository;
     }
 
-    public async Task<KnowledgeItem?> SearchAsync(string question)
+    public async Task<List<KnowledgeItem>> SearchAsync(string question)
     {
         return await _knowledgeRepository.SearchAsync(question);
     }

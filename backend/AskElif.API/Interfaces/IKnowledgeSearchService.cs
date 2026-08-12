@@ -4,5 +4,5 @@ namespace AskElif.API.Interfaces;
 
 public interface IKnowledgeSearchService
 {
-    Task<KnowledgeItem?> SearchAsync(string question);
+    Task<List<KnowledgeItem>> SearchAsync(string question);
 }

@@ -16,7 +16,7 @@ public class KnowledgeItem
     // Anahtar kelimeler
     public string Tags { get; set; } = string.Empty;
 
-    // OpenAI promptunda öncelik
+    // Bilginin önceliği
     public int Priority { get; set; } = 1;
 
     // Admin panelinde yayında mı?
@@ -25,4 +25,7 @@ public class KnowledgeItem
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public DateTime? UpdatedAt { get; set; }
+
+    // Jina Embedding v3 tarafından oluşturulan 1024 boyutlu vector
+    public string? Embedding { get; set; }
 }

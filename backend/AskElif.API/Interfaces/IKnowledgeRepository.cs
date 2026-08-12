@@ -6,6 +6,10 @@ public interface IKnowledgeRepository
 {
     Task<List<KnowledgeItem>> GetAllAsync();
 
+    Task<List<KnowledgeItem>> GetPublishedAsync();
+    
+    Task<List<KnowledgeItem>> GetPublishedWithEmbeddingsAsync();
+
     Task<KnowledgeItem?> GetByIdAsync(int id);
 
     Task<List<KnowledgeItem>> SearchAsync(string question);

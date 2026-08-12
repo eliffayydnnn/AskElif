@@ -26,6 +26,8 @@ builder.Services.AddScoped<IKnowledgeSearchService, KnowledgeSearchService>();
 builder.Services.AddScoped<IChatService, ChatService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<GeminiService>();
+builder.Services.AddHttpClient<IEmbeddingService, EmbeddingService>();
+builder.Services.AddScoped<KnowledgeEmbeddingService>();
 
 builder.Services.AddCors(options =>
 {

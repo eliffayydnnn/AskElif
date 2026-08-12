@@ -18,6 +18,12 @@ public class KnowledgeRepository : IKnowledgeRepository
     {
         return await _context.KnowledgeItems.ToListAsync();
     }
+    public async Task<List<KnowledgeItem>> GetPublishedAsync()
+{
+    return await _context.KnowledgeItems
+        .Where(x => x.IsPublished)
+        .ToListAsync();
+}
 
     public async Task<KnowledgeItem?> GetByIdAsync(int id)
     {
@@ -110,6 +116,12 @@ public class KnowledgeRepository : IKnowledgeRepository
 
         return results;
     }
+    public async Task<List<KnowledgeItem>> GetPublishedWithEmbeddingsAsync()
+{
+    return await _context.KnowledgeItems
+        .Where(x => x.IsPublished && x.Embedding != null)
+        .ToListAsync();
+}
 
     private string NormalizeTurkishWord(string word)
     {

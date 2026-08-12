@@ -43,65 +43,49 @@ public class ChatService : IChatService
             Content = question
         });
 
-        // Knowledge tabanında ara
-        var knowledgeItems =
+        // Semantic search ile en alakalı bilgiyi bul
+        var knowledge =
             await _knowledgeSearchService.SearchAsync(question);
 
         string answer;
         bool isAnswered;
 
-        if (knowledgeItems.Any())
+        if (knowledge != null)
         {
-            // Bulunan tüm alakalı bilgileri Gemini'ye gönderiyoruz.
-
-            var knowledgeContext = string.Join(
-                "\n\n--------------------\n\n",
-                knowledgeItems.Select(item => $"""
-                    Başlık:
-                    {item.Title}
-
-                    Kategori:
-                    {item.Category}
-
-                    İçerik:
-                    {item.Content}
-
-                    Etiketler:
-                    {item.Tags}
-                    """));
+            // Knowledge bulundu.
+            // Gemini'ye sadece bulunan CV bilgisini veriyoruz.
 
             var prompt = $"""
                 Sen AskElif isimli bir CV ve kariyer chatbotusun.
 
-                Aşağıdaki bilgiler Elif Aydın'ın CV ve kariyer bilgi
-                tabanından alınmıştır.
+                Aşağıdaki bilgi Elif'in CV'sinden alınmıştır:
 
-                ====================
-                CV BİLGİLERİ
-                ====================
+                ---
+                Başlık:
+                {knowledge.Title}
 
-                {knowledgeContext}
+                Kategori:
+                {knowledge.Category}
 
-                ====================
-                KULLANICI SORUSU
-                ====================
+                İçerik:
+                {knowledge.Content}
 
+                Etiketler:
+                {knowledge.Tags}
+
+                Kaynak:
+                {knowledge.Source}
+                ---
+
+                Kullanıcının sorusu:
                 {question}
 
-                ====================
-                KURALLAR
-                ====================
-
-                - Sadece yukarıda verilen CV bilgilerini kullan.
-                - Verilen bilgilerde olmayan hiçbir bilgiyi uydurma.
-                - Sorunun cevabı verilen bilgilerde varsa doğrudan cevapla.
-                - Birden fazla bilgi soruyla alakalıysa bunları birlikte kullan.
-                - Alakasız bilgileri cevaba dahil etme.
-                - Doğal ve profesyonel Türkçe kullan.
+                Kurallar:
+                - Sadece verilen CV bilgilerini kullan.
+                - Verilen bilgilerde olmayan bir şeyi uydurma.
+                - Kullanıcıya doğal ve profesyonel Türkçe ile cevap ver.
                 - Cevabı gereksiz yere uzatma.
-                - Kullanıcı "kimdir", "hangi teknolojileri biliyor",
-                  "hangi projeleri yaptı" gibi genel bir soru sorarsa,
-                  verilen alakalı bilgileri anlamlı şekilde birleştir.
+                - Sorunun cevabı verilen bilgilerde varsa doğrudan cevapla.
                 """;
 
             answer =
@@ -111,7 +95,6 @@ public class ChatService : IChatService
         }
         else
         {
-            // Knowledge bulunamadı.
             answer =
                 "Bu konuda henüz bilgim bulunmuyor.";
 

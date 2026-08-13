@@ -1,3 +1,4 @@
+using System.Text.Json;
 using AskElif.API.DTOs;
 using AskElif.API.Interfaces;
 using AskElif.API.Models;
@@ -7,10 +8,14 @@ namespace AskElif.API.Services;
 public class KnowledgeService : IKnowledgeService
 {
     private readonly IKnowledgeRepository _repository;
+    private readonly IEmbeddingService _embeddingService;
 
-    public KnowledgeService(IKnowledgeRepository repository)
+    public KnowledgeService(
+        IKnowledgeRepository repository,
+        IEmbeddingService embeddingService)
     {
         _repository = repository;
+        _embeddingService = embeddingService;
     }
 
     public async Task<List<KnowledgeDto>> GetAllAsync()
@@ -67,24 +72,27 @@ public class KnowledgeService : IKnowledgeService
             IsPublished = dto.IsPublished
         };
 
+        // Embedding için aranabilir metni oluştur
+        var textForEmbedding = BuildEmbeddingText(item);
+
+        // Jina'dan embedding oluştur
+        var embedding =
+            await _embeddingService.GenerateEmbeddingAsync(
+                textForEmbedding);
+
+        // Embedding'i JSON olarak kaydet
+        item.Embedding =
+            JsonSerializer.Serialize(embedding);
+
+        // Knowledge + embedding birlikte kaydedilir
         await _repository.AddAsync(item);
 
-        return new KnowledgeDto
-        {
-            Id = item.Id,
-            Title = item.Title,
-            Category = item.Category,
-            Content = item.Content,
-            Source = item.Source,
-            Tags = item.Tags,
-            Priority = item.Priority,
-            IsPublished = item.IsPublished,
-            CreatedAt = item.CreatedAt,
-            UpdatedAt = item.UpdatedAt
-        };
+        return MapToDto(item);
     }
 
-    public async Task<bool> UpdateAsync(int id, UpdateKnowledgeDto dto)
+    public async Task<bool> UpdateAsync(
+        int id,
+        UpdateKnowledgeDto dto)
     {
         var item = await _repository.GetByIdAsync(id);
 
@@ -99,6 +107,16 @@ public class KnowledgeService : IKnowledgeService
         item.Priority = dto.Priority;
         item.IsPublished = dto.IsPublished;
         item.UpdatedAt = DateTime.UtcNow;
+
+        // İçerik değiştiği için embedding'i yeniden oluştur
+        var textForEmbedding = BuildEmbeddingText(item);
+
+        var embedding =
+            await _embeddingService.GenerateEmbeddingAsync(
+                textForEmbedding);
+
+        item.Embedding =
+            JsonSerializer.Serialize(embedding);
 
         await _repository.UpdateAsync(item);
 
@@ -115,5 +133,39 @@ public class KnowledgeService : IKnowledgeService
         await _repository.DeleteAsync(item);
 
         return true;
+    }
+
+    private static string BuildEmbeddingText(
+        KnowledgeItem item)
+    {
+        return $"""
+            Başlık: {item.Title}
+
+            Kategori: {item.Category}
+
+            İçerik: {item.Content}
+
+            Kaynak: {item.Source}
+
+            Etiketler: {item.Tags}
+            """;
+    }
+
+    private static KnowledgeDto MapToDto(
+        KnowledgeItem item)
+    {
+        return new KnowledgeDto
+        {
+            Id = item.Id,
+            Title = item.Title,
+            Category = item.Category,
+            Content = item.Content,
+            Source = item.Source,
+            Tags = item.Tags,
+            Priority = item.Priority,
+            IsPublished = item.IsPublished,
+            CreatedAt = item.CreatedAt,
+            UpdatedAt = item.UpdatedAt
+        };
     }
 }

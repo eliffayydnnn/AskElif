@@ -43,49 +43,80 @@ public class ChatService : IChatService
             Content = question
         });
 
-        // Semantic search ile en alakalı bilgiyi bul
-        var knowledge =
-            await _knowledgeSearchService.SearchAsync(question);
+        // Semantic search ile en alakalı Knowledge kayıtlarını getir
+        var searchResults =
+            await _knowledgeSearchService.SearchAsync(
+                question,
+                3);
+
+        // Minimum similarity threshold
+        const double minimumSimilarity = 0.60;
+
+        // Yeterince güçlü eşleşme var mı?
+        var relevantResults = searchResults
+            .Where(x => x.SimilarityScore >= minimumSimilarity)
+            .ToList();
 
         string answer;
         bool isAnswered;
 
-        if (knowledge != null)
+        if (relevantResults.Any())
         {
-            // Knowledge bulundu.
-            // Gemini'ye sadece bulunan CV bilgisini veriyoruz.
+            // Gemini'ye birden fazla Knowledge bilgisini gönderiyoruz.
+            var knowledgeContext = string.Join(
+                "\n\n",
+                relevantResults.Select((result, index) => $"""
+                    --- Bilgi {index + 1} ---
+
+                    Başlık:
+                    {result.Item.Title}
+
+                    Kategori:
+                    {result.Item.Category}
+
+                    İçerik:
+                    {result.Item.Content}
+
+                    Kaynak:
+                    {result.Item.Source}
+
+                    Etiketler:
+                    {result.Item.Tags}
+
+                    Benzerlik Skoru:
+                    {result.SimilarityScore:F3}
+                    """));
 
             var prompt = $"""
                 Sen AskElif isimli bir CV ve kariyer chatbotusun.
 
-                Aşağıdaki bilgi Elif'in CV'sinden alınmıştır:
+                Aşağıdaki bilgiler Elif Aydın'ın CV'sinden,
+                projelerinden ve kariyer bilgilerinden alınmıştır.
 
-                ---
-                Başlık:
-                {knowledge.Title}
+                SADECE aşağıdaki bilgilerden yararlanarak cevap ver.
 
-                Kategori:
-                {knowledge.Category}
+                Eğer sorunun cevabı verilen bilgilerde yoksa,
+                kesinlikle bilgi uydurma.
 
-                İçerik:
-                {knowledge.Content}
+                --- KNOWLEDGE ---
 
-                Etiketler:
-                {knowledge.Tags}
+                {knowledgeContext}
 
-                Kaynak:
-                {knowledge.Source}
-                ---
+                --- KULLANICININ SORUSU ---
 
-                Kullanıcının sorusu:
                 {question}
 
-                Kurallar:
-                - Sadece verilen CV bilgilerini kullan.
-                - Verilen bilgilerde olmayan bir şeyi uydurma.
-                - Kullanıcıya doğal ve profesyonel Türkçe ile cevap ver.
-                - Cevabı gereksiz yere uzatma.
-                - Sorunun cevabı verilen bilgilerde varsa doğrudan cevapla.
+                --- KURALLAR ---
+
+                - Sadece verilen Knowledge bilgilerini kullan.
+                - Bilgi verilen içerikte yoksa tahmin etme.
+                - Kendi genel bilgini kullanarak Elif hakkında bilgi üretme.
+                - Doğal ve profesyonel Türkçe kullan.
+                - Gereksiz uzun cevap verme.
+                - Sorunun cevabı birden fazla Knowledge kaydında bulunuyorsa
+                  bu bilgileri birleştirerek cevap ver.
+                - Kullanıcı açıkça Elif hakkında soruyorsa,
+                  üçüncü şahıs kullanabilirsin.
                 """;
 
             answer =
@@ -95,6 +126,7 @@ public class ChatService : IChatService
         }
         else
         {
+            // Yeterli semantic eşleşme bulunamadı.
             answer =
                 "Bu konuda henüz bilgim bulunmuyor.";
 

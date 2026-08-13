@@ -1,4 +1,5 @@
 using System.Text.Json;
+using AskElif.API.DTOs;
 using AskElif.API.Interfaces;
 using AskElif.API.Models;
 
@@ -17,23 +18,24 @@ public class KnowledgeSearchService : IKnowledgeSearchService
         _embeddingService = embeddingService;
     }
 
-    public async Task<KnowledgeItem?> SearchAsync(string question)
+    public async Task<List<KnowledgeSearchResultDto>> SearchAsync(
+        string question,
+        int topK = 3)
     {
         // Kullanıcının sorusu için embedding oluştur
         var questionEmbedding =
             await _embeddingService.GenerateEmbeddingAsync(question);
 
-        // Embedding'i bulunan yayınlanmış bilgileri getir
+        // Yayındaki ve embedding'i bulunan Knowledge kayıtlarını getir
         var knowledgeItems =
             await _knowledgeRepository.GetPublishedWithEmbeddingsAsync();
 
         if (!knowledgeItems.Any())
         {
-            return await GetKeywordFallbackAsync(question);
+            return new List<KnowledgeSearchResultDto>();
         }
 
-        KnowledgeItem? bestItem = null;
-        double bestScore = 0;
+        var results = new List<KnowledgeSearchResultDto>();
 
         foreach (var item in knowledgeItems)
         {
@@ -50,33 +52,18 @@ public class KnowledgeSearchService : IKnowledgeSearchService
                 questionEmbedding,
                 itemEmbedding);
 
-            if (score > bestScore)
+            results.Add(new KnowledgeSearchResultDto
             {
-                bestScore = score;
-                bestItem = item;
-            }
+                Item = item,
+                SimilarityScore = score
+            });
         }
 
-        // Semantic search için minimum güven eşiği.
-        const double minimumSimilarity = 0.60;
-
-        // Yeterince güçlü eşleşme yoksa
-        // doğrudan "knowledge yok" kabul ediyoruz.
-        if (bestItem == null || bestScore < minimumSimilarity)
-        {
-            return null;
-        }
-
-        return bestItem;
-    }
-
-    private async Task<KnowledgeItem?> GetKeywordFallbackAsync(
-        string question)
-    {
-        var fallbackResults =
-            await _knowledgeRepository.SearchAsync(question);
-
-        return fallbackResults.FirstOrDefault();
+        // En yüksek similarity skoruna sahip kayıtları seç
+        return results
+            .OrderByDescending(x => x.SimilarityScore)
+            .Take(topK)
+            .ToList();
     }
 
     private static double CosineSimilarity(

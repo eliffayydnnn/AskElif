@@ -12,6 +12,10 @@ public class ChatService : IChatService
     private readonly IMessageRepository _messageRepository;
     private readonly GeminiService _geminiService;
 
+    // Similarity değerleri
+    private const double MinimumSimilarity = 0.45;
+    private const double StrongSimilarity = 0.80;
+
     public ChatService(
         IKnowledgeSearchService knowledgeSearchService,
         IUnknownQuestionRepository unknownQuestionRepository,
@@ -30,12 +34,18 @@ public class ChatService : IChatService
         int? conversationId,
         string question)
     {
-        // Conversation oluştur veya mevcut conversation'ı getir
+        // =========================================
+        // CONVERSATION
+        // =========================================
+
         var conversation =
             await _conversationRepository.CreateIfNotExistsAsync(
                 conversationId);
 
-        // Kullanıcının mesajını kaydet
+        // =========================================
+        // USER MESAJINI KAYDET
+        // =========================================
+
         await _messageRepository.AddAsync(new Message
         {
             ConversationId = conversation.Id,
@@ -43,49 +53,263 @@ public class ChatService : IChatService
             Content = question
         });
 
-        // Semantic search ile en alakalı Knowledge kayıtlarını getir
+        // =========================================
+        // SEMANTIC SEARCH
+        // =========================================
+
         var searchResults =
             await _knowledgeSearchService.SearchAsync(
                 question,
                 3);
 
-        // Minimum similarity threshold
-        const double minimumSimilarity = 0.60;
+        Console.WriteLine();
+        Console.WriteLine("===== SEMANTIC SEARCH RESULTS =====");
 
-        // Yeterince güçlü eşleşme var mı?
+        foreach (var result in searchResults)
+        {
+            Console.WriteLine(
+                $"Title: {result.Item.Title} | " +
+                $"Score: {result.SimilarityScore:F4}");
+        }
+
+        Console.WriteLine("===================================");
+        Console.WriteLine();
+
+        // =========================================
+        // YETERLİ EŞLEŞME VAR MI?
+        // =========================================
+
         var relevantResults = searchResults
-            .Where(x => x.SimilarityScore >= minimumSimilarity)
+            .Where(x =>
+                x.SimilarityScore >= MinimumSimilarity)
             .ToList();
 
         string answer;
         bool isAnswered;
 
-        if (relevantResults.Any())
+        // =========================================
+        // HİÇBİR KNOWLEDGE UYGUN DEĞİLSE
+        // =========================================
+
+        if (!relevantResults.Any())
         {
-            // Gemini'ye birden fazla Knowledge bilgisini gönderiyoruz.
-            var knowledgeContext = string.Join(
-                "\n\n",
-                relevantResults.Select((result, index) => $"""
-                    --- Bilgi {index + 1} ---
+            answer =
+                "Bu konuda henüz bilgim bulunmuyor.";
 
-                    Başlık:
-                    {result.Item.Title}
+            isAnswered = false;
 
-                    Kategori:
-                    {result.Item.Category}
+            await SaveUnknownQuestion(question);
+        }
+        else
+        {
+            // =========================================
+            // EN İYİ SONUCU BUL
+            // =========================================
 
-                    İçerik:
-                    {result.Item.Content}
+            var bestResult =
+                relevantResults
+                    .OrderByDescending(x => x.SimilarityScore)
+                    .First();
 
-                    Kaynak:
-                    {result.Item.Source}
+            Console.WriteLine(
+                $"===== BEST KNOWLEDGE =====");
 
-                    Etiketler:
-                    {result.Item.Tags}
+            Console.WriteLine(
+                $"Title: {bestResult.Item.Title}");
 
-                    Benzerlik Skoru:
-                    {result.SimilarityScore:F3}
-                    """));
+            Console.WriteLine(
+                $"Score: {bestResult.SimilarityScore:F4}");
+
+            Console.WriteLine(
+                "==========================");
+
+            // =========================================
+            // KNOWLEDGE CONTEXT
+            // =========================================
+
+            var knowledgeContext =
+                string.Join(
+                    "\n\n",
+                    relevantResults.Select(
+                        (result, index) => $"""
+                            --- Bilgi {index + 1} ---
+
+                            Başlık:
+                            {result.Item.Title}
+
+                            Kategori:
+                            {result.Item.Category}
+
+                            İçerik:
+                            {result.Item.Content}
+
+                            Kaynak:
+                            {result.Item.Source}
+
+                            Etiketler:
+                            {result.Item.Tags}
+
+                            Benzerlik Skoru:
+                            {result.SimilarityScore:F3}
+                            """));
+
+            // =========================================
+            // GÜÇLÜ EŞLEŞME
+            // =========================================
+            //
+            // Similarity >= 0.80 ise Gemini'ye:
+            //
+            // "Bu bilgi soruyu gerçekten cevaplıyor mu?"
+            //
+            // diye ayrıca sormuyoruz.
+            //
+            // Direkt cevap üretmeye geçiyoruz.
+            // Böylece Gemini çağrısı 2 yerine 1 oluyor.
+            // =========================================
+
+            if (bestResult.SimilarityScore >= StrongSimilarity)
+            {
+                Console.WriteLine(
+                    "===== STRONG MATCH =====");
+
+                Console.WriteLine(
+                    "Gemini relevance kontrolü atlandı.");
+
+                Console.WriteLine(
+                    "Direkt cevap üretilecek.");
+
+                Console.WriteLine(
+                    "========================");
+            }
+            else
+            {
+                // =========================================
+                // ORTA SEVİYE EŞLEŞME
+                // =========================================
+                //
+                // 0.45 - 0.80 arasındaysa Gemini'ye
+                // gerçekten cevap var mı diye soruyoruz.
+                // =========================================
+
+                Console.WriteLine(
+                    "===== MEDIUM MATCH =====");
+
+                Console.WriteLine(
+                    "Gemini relevance kontrolü yapılacak.");
+
+                Console.WriteLine(
+                    "========================");
+
+                var relevancePrompt = $"""
+                    Sen AskElif isimli bir CV chatbotunun
+                    bilgi kontrol sistemisin.
+
+                    Kullanıcının sorusu:
+
+                    "{question}"
+
+                    Aşağıdaki Knowledge kayıtları
+                    Elif Aydın hakkında bilgi içermektedir:
+
+                    --- KNOWLEDGE ---
+
+                    {knowledgeContext}
+
+                    --- GÖREV ---
+
+                    Knowledge kayıtlarını dikkatlice incele.
+
+                    Kullanıcının sorusunun cevabı bu bilgilerde
+                    gerçekten bulunuyor mu?
+
+                    Eğer cevap açıkça veya doğrudan
+                    bu bilgilerden çıkarılabiliyorsa sadece:
+
+                    YES
+
+                    yaz.
+
+                    Eğer cevap bilgilerde bulunmuyorsa veya
+                    sadece konu olarak benzer bir bilgi varsa:
+
+                    NO
+
+                    yaz.
+
+                    Örnek:
+
+                    Soru:
+                    "Elif'in en sevdiği tatlı nedir?"
+
+                    Knowledge:
+                    "Elif'in en sevdiği yemek mantıdır."
+
+                    Bu durumda cevap tatlı hakkında olmadığı için:
+
+                    NO
+
+                    yaz.
+
+                    Sadece YES veya NO yaz.
+                    """;
+
+                var relevanceResult =
+                    await _geminiService.GenerateAsync(
+                        relevancePrompt);
+
+                var isRelevant =
+                    relevanceResult
+                        .Trim()
+                        .Equals(
+                            "YES",
+                            StringComparison.OrdinalIgnoreCase);
+
+                Console.WriteLine(
+                    "===== KNOWLEDGE RELEVANCE =====");
+
+                Console.WriteLine(
+                    $"Question: {question}");
+
+                Console.WriteLine(
+                    $"Gemini relevance result: {relevanceResult}");
+
+                Console.WriteLine(
+                    "================================");
+
+                // =========================================
+                // RELEVANT DEĞİLSE
+                // =========================================
+
+                if (!isRelevant)
+                {
+                    answer =
+                        "Bu konuda henüz bilgim bulunmuyor.";
+
+                    isAnswered = false;
+
+                    await SaveUnknownQuestion(question);
+
+                    // Bot mesajını kaydet
+                    await _messageRepository.AddAsync(
+                        new Message
+                        {
+                            ConversationId = conversation.Id,
+                            Role = "Assistant",
+                            Content = answer
+                        });
+
+                    return new ChatResultDto
+                    {
+                        ConversationId = conversation.Id,
+                        Answer = answer,
+                        IsAnswered = false
+                    };
+                }
+            }
+
+            // =========================================
+            // CEVAP ÜRET
+            // =========================================
 
             var prompt = $"""
                 Sen AskElif isimli bir CV ve kariyer chatbotusun.
@@ -110,12 +334,13 @@ public class ChatService : IChatService
 
                 - Sadece verilen Knowledge bilgilerini kullan.
                 - Bilgi verilen içerikte yoksa tahmin etme.
-                - Kendi genel bilgini kullanarak Elif hakkında bilgi üretme.
+                - Kendi genel bilgini kullanarak Elif hakkında
+                  bilgi üretme.
                 - Doğal ve profesyonel Türkçe kullan.
                 - Gereksiz uzun cevap verme.
-                - Sorunun cevabı birden fazla Knowledge kaydında bulunuyorsa
-                  bu bilgileri birleştirerek cevap ver.
-                - Kullanıcı açıkça Elif hakkında soruyorsa,
+                - Sorunun cevabı birden fazla Knowledge kaydında
+                  bulunuyorsa bu bilgileri birleştirerek cevap ver.
+                - Kullanıcı açıkça Elif hakkında soruyorsa
                   üçüncü şahıs kullanabilirsin.
                 """;
 
@@ -124,29 +349,22 @@ public class ChatService : IChatService
 
             isAnswered = true;
         }
-        else
-        {
-            // Yeterli semantic eşleşme bulunamadı.
-            answer =
-                "Bu konuda henüz bilgim bulunmuyor.";
 
-            isAnswered = false;
+        // =========================================
+        // BOT MESAJINI KAYDET
+        // =========================================
 
-            // Cevaplanamayan soruyu kaydet
-            await _unknownQuestionRepository.AddAsync(
-                new UnknownQuestion
-                {
-                    Question = question
-                });
-        }
+        await _messageRepository.AddAsync(
+            new Message
+            {
+                ConversationId = conversation.Id,
+                Role = "Assistant",
+                Content = answer
+            });
 
-        // Bot cevabını kaydet
-        await _messageRepository.AddAsync(new Message
-        {
-            ConversationId = conversation.Id,
-            Role = "Assistant",
-            Content = answer
-        });
+        // =========================================
+        // SONUÇ
+        // =========================================
 
         return new ChatResultDto
         {
@@ -154,5 +372,23 @@ public class ChatService : IChatService
             Answer = answer,
             IsAnswered = isAnswered
         };
+    }
+
+    // =========================================
+    // UNKNOWN QUESTION KAYDET
+    // =========================================
+
+    private async Task SaveUnknownQuestion(
+        string question)
+    {
+        await _unknownQuestionRepository.AddAsync(
+            new UnknownQuestion
+            {
+                Question = question,
+                IsResolved = false
+            });
+
+        Console.WriteLine(
+            $"Unknown Question kaydedildi: {question}");
     }
 }

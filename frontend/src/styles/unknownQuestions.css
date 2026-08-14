@@ -547,3 +547,39 @@
     flex: 1;
   }
 }
+/* =========================
+   CONVERT TO KNOWLEDGE
+========================= */
+
+.convert-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  border: 1px solid #e8c6d7;
+  background: #fff5fa;
+  color: #c85b88;
+
+  padding: 8px 12px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  transition: all 0.2s ease;
+}
+
+.convert-btn:hover {
+  background: #fdebf3;
+  border-color: #df6f9f;
+  transform: translateY(-1px);
+}
+
+.convert-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}

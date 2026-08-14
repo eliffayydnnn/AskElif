@@ -1,9 +1,20 @@
 import { useEffect, useState } from "react";
-import { Search, CircleHelp, Check, Trash2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+
+import {
+  Search,
+  CircleHelp,
+  Check,
+  Trash2,
+  BookOpen,
+} from "lucide-react";
+
 import api from "../../api/api";
 import "../../styles/unknownQuestions.css";
 
 function UnknownQuestionsPage() {
+  const navigate = useNavigate();
+
   const [questions, setQuestions] = useState([]);
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [search, setSearch] = useState("");
@@ -31,11 +42,30 @@ function UnknownQuestionsPage() {
       setFilteredQuestions(response.data);
     } catch (error) {
       console.log(error);
+      console.log(error.response?.data);
+
       alert("Sorular yüklenemedi.");
     } finally {
       setLoading(false);
     }
   };
+
+  // =========================
+  // KNOWLEDGE'A DÖNÜŞTÜR
+  // =========================
+
+  const handleConvertToKnowledge = (item) => {
+    navigate("/knowledge/create", {
+      state: {
+        unknownQuestionId: item.id,
+        question: item.question,
+      },
+    });
+  };
+
+  // =========================
+  // ÇÖZÜLDÜ
+  // =========================
 
   const handleResolve = async (id) => {
     if (
@@ -52,7 +82,10 @@ function UnknownQuestionsPage() {
       setQuestions((prev) =>
         prev.map((item) =>
           item.id === id
-            ? { ...item, isResolved: true }
+            ? {
+                ...item,
+                isResolved: true,
+              }
             : item
         )
       );
@@ -60,12 +93,22 @@ function UnknownQuestionsPage() {
       alert("Soru çözüldü olarak işaretlendi.");
     } catch (error) {
       console.log(error);
+      console.log(error.response?.data);
+
       alert("İşlem başarısız.");
     }
   };
 
+  // =========================
+  // SİL
+  // =========================
+
   const handleDelete = async (id) => {
-    if (!window.confirm("Bu soruyu silmek istiyor musunuz?")) {
+    if (
+      !window.confirm(
+        "Bu soruyu silmek istiyor musunuz?"
+      )
+    ) {
       return;
     }
 
@@ -79,15 +122,24 @@ function UnknownQuestionsPage() {
       alert("Soru silindi.");
     } catch (error) {
       console.log(error);
+      console.log(error.response?.data);
+
       alert("Silinemedi.");
     }
   };
+
+  // =========================
+  // LOADING
+  // =========================
 
   if (loading) {
     return (
       <div className="unknown-loading">
         <div className="unknown-spinner"></div>
-        <span>Sorular yükleniyor...</span>
+
+        <span>
+          Sorular yükleniyor...
+        </span>
       </div>
     );
   }
@@ -96,6 +148,7 @@ function UnknownQuestionsPage() {
     <div className="unknown-page">
 
       {/* HEADER */}
+
       <div className="unknown-header">
 
         <div className="unknown-heading">
@@ -105,20 +158,25 @@ function UnknownQuestionsPage() {
           </div>
 
           <div>
+
             <div className="unknown-title">
               Unknown Questions
             </div>
 
             <div className="unknown-subtitle">
-              Chatbot'un cevaplayamadığı soruları buradan takip edebilirsin.
+              Chatbot'un cevaplayamadığı soruları
+              buradan takip edebilirsin.
             </div>
+
           </div>
 
         </div>
 
       </div>
 
+
       {/* TOOLBAR */}
+
       <div className="unknown-toolbar">
 
         <div className="unknown-search-wrapper">
@@ -133,19 +191,30 @@ function UnknownQuestionsPage() {
             type="text"
             placeholder="Soru ara..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
           />
 
         </div>
 
         <div className="unknown-count">
-          <strong>{filteredQuestions.length}</strong>
-          <span>soru</span>
+
+          <strong>
+            {filteredQuestions.length}
+          </strong>
+
+          <span>
+            soru
+          </span>
+
         </div>
 
       </div>
 
-      {/* QUESTIONS */}
+
+      {/* EMPTY */}
+
       {filteredQuestions.length === 0 ? (
 
         <div className="unknown-empty">
@@ -159,7 +228,8 @@ function UnknownQuestionsPage() {
           </h3>
 
           <p>
-            Arama kriterlerine uygun bir soru bulunmuyor.
+            Arama kriterlerine uygun bir soru
+            bulunmuyor.
           </p>
 
         </div>
@@ -173,9 +243,13 @@ function UnknownQuestionsPage() {
             <div
               key={item.id}
               className={`unknown-card ${
-                item.isResolved ? "resolved" : ""
+                item.isResolved
+                  ? "resolved"
+                  : ""
               }`}
             >
+
+              {/* CARD TOP */}
 
               <div className="unknown-card-top">
 
@@ -190,9 +264,11 @@ function UnknownQuestionsPage() {
                   </div>
 
                   <div className="question-date">
+
                     {new Date(
                       item.askedAt
                     ).toLocaleString("tr-TR")}
+
                   </div>
 
                 </div>
@@ -204,20 +280,27 @@ function UnknownQuestionsPage() {
                       : "pending"
                   }`}
                 >
+
                   <span>
+
                     {item.isResolved ? (
                       <Check size={13} />
                     ) : (
                       "!"
                     )}
+
                   </span>
 
                   {item.isResolved
                     ? "Çözüldü"
                     : "Bekliyor"}
+
                 </div>
 
               </div>
+
+
+              {/* FOOTER */}
 
               <div className="unknown-card-footer">
 
@@ -227,17 +310,47 @@ function UnknownQuestionsPage() {
 
                 <div className="unknown-actions">
 
+                  {/* KNOWLEDGE'A DÖNÜŞTÜR */}
+
                   {!item.isResolved && (
+
+                    <button
+                      className="convert-btn"
+                      onClick={() =>
+                        handleConvertToKnowledge(item)
+                      }
+                    >
+
+                      <BookOpen size={14} />
+
+                      Knowledge'a Dönüştür
+
+                    </button>
+
+                  )}
+
+
+                  {/* ÇÖZÜLDÜ */}
+
+                  {!item.isResolved && (
+
                     <button
                       className="resolve-btn"
                       onClick={() =>
                         handleResolve(item.id)
                       }
                     >
+
                       <Check size={14} />
+
                       Çözüldü
+
                     </button>
+
                   )}
+
+
+                  {/* SİL */}
 
                   <button
                     className="unknown-delete-btn"
@@ -245,8 +358,11 @@ function UnknownQuestionsPage() {
                       handleDelete(item.id)
                     }
                   >
+
                     <Trash2 size={14} />
+
                     Sil
+
                   </button>
 
                 </div>

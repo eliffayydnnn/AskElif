@@ -35,8 +35,10 @@ public class KnowledgeController : ControllerBase
         return Ok(knowledgeItem);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(CreateKnowledgeDto dto)
+ [HttpPost]
+public async Task<IActionResult> Create(CreateKnowledgeDto dto)
+{
+    try
     {
         var created = await _service.CreateAsync(dto);
 
@@ -45,6 +47,19 @@ public class KnowledgeController : ControllerBase
             new { id = created.Id },
             created);
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine("===== KNOWLEDGE CREATE ERROR =====");
+        Console.WriteLine(ex.ToString());
+        Console.WriteLine("=================================");
+
+        return StatusCode(500, new
+        {
+            message = "Knowledge oluşturulurken hata oluştu.",
+            error = ex.Message
+        });
+    }
+}
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(int id, UpdateKnowledgeDto dto)

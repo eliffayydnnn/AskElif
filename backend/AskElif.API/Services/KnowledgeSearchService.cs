@@ -59,6 +59,21 @@ public class KnowledgeSearchService : IKnowledgeSearchService
             });
         }
 
+        // Semantic search sonuçlarını terminalde göster
+        Console.WriteLine();
+        Console.WriteLine("===== SEMANTIC SEARCH RESULTS =====");
+
+        foreach (var result in results
+                     .OrderByDescending(x => x.SimilarityScore))
+        {
+            Console.WriteLine(
+                $"Title: {result.Item.Title} | " +
+                $"Score: {result.SimilarityScore:F4}");
+        }
+
+        Console.WriteLine("===================================");
+        Console.WriteLine();
+
         // En yüksek similarity skoruna sahip kayıtları seç
         return results
             .OrderByDescending(x => x.SimilarityScore)

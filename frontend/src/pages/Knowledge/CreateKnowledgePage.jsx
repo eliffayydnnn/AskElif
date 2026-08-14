@@ -1,5 +1,9 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
+
 import {
   ArrowLeft,
   BookOpen,
@@ -14,48 +18,126 @@ import "../../styles/createKnowledge.css";
 
 function CreateKnowledgePage() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
-  const [category, setCategory] = useState("");
-  const [saving, setSaving] = useState(false);
+  const unknownQuestionId =
+    location.state?.unknownQuestionId ?? null;
+
+  const initialQuestion =
+    location.state?.question ?? "";
+
+  const [question, setQuestion] =
+    useState(initialQuestion);
+
+  const [answer, setAnswer] =
+    useState("");
+
+  const [category, setCategory] =
+    useState("");
+
+  const [saving, setSaving] =
+    useState(false);
+
+  // =========================
+  // KAYDET
+  // =========================
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!question.trim() || !answer.trim() || !category.trim()) {
-      alert("Lütfen tüm alanları doldurun.");
+    if (!question.trim()) {
+      alert("Lütfen soruyu doldurun.");
+      return;
+    }
+
+    if (!answer.trim()) {
+      alert("Lütfen cevabı doldurun.");
+      return;
+    }
+
+    if (!category.trim()) {
+      alert("Lütfen kategori girin.");
       return;
     }
 
     try {
       setSaving(true);
 
-      const token = localStorage.getItem("token");
+      // =========================
+      // UNKNOWN QUESTION
+      // =========================
 
-      await api.post(
-        "/Knowledge",
-        {
-          question,
-          answer,
-          category,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
+      if (unknownQuestionId) {
+        const response = await api.post(
+          `/UnknownQuestions/${unknownQuestionId}/convert-to-knowledge`,
+          {
+            answer: answer,
+            category: category,
+          }
+        );
+
+        console.log(
+          "Unknown Question -> Knowledge:",
+          response.data
+        );
+
+        alert(
+          "Cevap kaydedildi ve Knowledge'a eklendi."
+        );
+      }
+
+      // =========================
+      // NORMAL KNOWLEDGE
+      // =========================
+
+      else {
+        const response = await api.post(
+          "/Knowledge",
+          {
+            title: question,
+            category: category,
+            content: answer,
+            source: "Admin",
+            tags: "",
+            priority: 1,
+            isPublished: true,
+          }
+        );
+
+        console.log(
+          "Knowledge oluşturuldu:",
+          response.data
+        );
+
+        alert(
+          "Bilgi başarıyla eklendi."
+        );
+      }
+
+      // Knowledge listesine dön
+      navigate("/knowledge");
+
+    } catch (error) {
+      console.error(
+        "Knowledge save error:",
+        error
       );
 
-      alert("Bilgi başarıyla eklendi.");
+      console.error(
+        "Response:",
+        error.response?.data
+      );
 
-      navigate("/knowledge");
-    } catch (error) {
-      console.log(error);
-      console.log(error.response);
-      console.log(error.response?.data);
+      console.error(
+        "Status:",
+        error.response?.status
+      );
 
-      alert("Bilgi eklenirken bir hata oluştu.");
+      alert(
+        error.response?.data?.message ||
+        "Bilgi kaydedilirken bir hata oluştu."
+      );
+
     } finally {
       setSaving(false);
     }
@@ -64,7 +146,9 @@ function CreateKnowledgePage() {
   return (
     <div className="create-knowledge-page">
 
-      {/* HEADER */}
+      {/* =========================
+          HEADER
+      ========================= */}
 
       <div className="create-knowledge-header">
 
@@ -72,8 +156,10 @@ function CreateKnowledgePage() {
           type="button"
           className="back-button"
           onClick={() => navigate("/knowledge")}
+          disabled={saving}
         >
           <ArrowLeft size={17} />
+
           Knowledge'a Dön
         </button>
 
@@ -84,29 +170,38 @@ function CreateKnowledgePage() {
           </div>
 
           <div>
-            <h1>Yeni Bilgi Ekle</h1>
+
+            <h1>
+              {unknownQuestionId
+                ? "Soruyu Cevapla"
+                : "Yeni Bilgi Ekle"}
+            </h1>
 
             <p>
-              AskElif'in bilgi tabanına yeni bir soru ve cevap ekle.
+              {unknownQuestionId
+                ? "Cevaplanamayan soruya bir cevap ekleyerek Knowledge tabanına kaydet."
+                : "AskElif'in bilgi tabanına yeni bir soru ve cevap ekle."}
             </p>
+
           </div>
 
         </div>
 
       </div>
 
-
-      {/* MAIN CONTENT */}
+      {/* =========================
+          MAIN
+      ========================= */}
 
       <div className="create-knowledge-layout">
 
-        {/* FORM CARD */}
+        {/* FORM */}
 
         <div className="create-knowledge-card">
 
           <form onSubmit={handleSubmit}>
 
-            {/* QUESTION */}
+            {/* SORU */}
 
             <div className="form-group">
 
@@ -119,17 +214,23 @@ function CreateKnowledgePage() {
                 type="text"
                 placeholder="Örneğin: Hangi teknolojileri biliyorsun?"
                 value={question}
-                onChange={(e) => setQuestion(e.target.value)}
+                onChange={(e) =>
+                  setQuestion(e.target.value)
+                }
+                readOnly={Boolean(
+                  unknownQuestionId
+                )}
               />
 
               <span className="form-hint">
-                Kullanıcının chatbot'a sorabileceği soruyu girin.
+                {unknownQuestionId
+                  ? "Bu soru Unknown Questions ekranından geldi."
+                  : "Kullanıcının chatbot'a sorabileceği soruyu girin."}
               </span>
 
             </div>
 
-
-            {/* ANSWER */}
+            {/* CEVAP */}
 
             <div className="form-group">
 
@@ -139,20 +240,22 @@ function CreateKnowledgePage() {
               </label>
 
               <textarea
-                placeholder="Bu soruya verilecek cevabı yazın..."
+                placeholder="Bu soruya verilecek doğru cevabı buraya yazın..."
                 value={answer}
-                onChange={(e) => setAnswer(e.target.value)}
+                onChange={(e) =>
+                  setAnswer(e.target.value)
+                }
                 rows={8}
               />
 
               <span className="form-hint">
-                Chatbot bu bilgiyi kullanarak kullanıcıya cevap verecek.
+                Chatbot'un bu soruya vereceği
+                cevabı buraya yazın.
               </span>
 
             </div>
 
-
-            {/* CATEGORY */}
+            {/* KATEGORİ */}
 
             <div className="form-group">
 
@@ -163,17 +266,19 @@ function CreateKnowledgePage() {
 
               <input
                 type="text"
-                placeholder="Örneğin: Eğitim, Yetenekler, Projeler"
+                placeholder="Örneğin: Kişisel Bilgiler, Hobiler, Eğitim"
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) =>
+                  setCategory(e.target.value)
+                }
               />
 
               <span className="form-hint">
-                Bilginin hangi kategoriye ait olduğunu belirtin.
+                Bilginin hangi kategoriye ait
+                olduğunu belirtin.
               </span>
 
             </div>
-
 
             {/* BUTTONS */}
 
@@ -182,7 +287,9 @@ function CreateKnowledgePage() {
               <button
                 type="button"
                 className="cancel-button"
-                onClick={() => navigate("/knowledge")}
+                onClick={() =>
+                  navigate("/unknown-questions")
+                }
                 disabled={saving}
               >
                 Vazgeç
@@ -193,9 +300,15 @@ function CreateKnowledgePage() {
                 className="save-button"
                 disabled={saving}
               >
+
                 <Save size={17} />
 
-                {saving ? "Kaydediliyor..." : "Bilgiyi Kaydet"}
+                {saving
+                  ? "Kaydediliyor..."
+                  : unknownQuestionId
+                  ? "Cevabı Kaydet"
+                  : "Bilgiyi Kaydet"}
+
               </button>
 
             </div>
@@ -204,8 +317,9 @@ function CreateKnowledgePage() {
 
         </div>
 
-
-        {/* INFORMATION CARD */}
+        {/* =========================
+            INFORMATION CARD
+        ========================= */}
 
         <div className="create-knowledge-info">
 
@@ -213,14 +327,17 @@ function CreateKnowledgePage() {
             💡
           </div>
 
-          <h3>Bilgi eklerken</h3>
+          <h3>
+            {unknownQuestionId
+              ? "Soruyu cevaplama"
+              : "Bilgi eklerken"}
+          </h3>
 
           <p>
-            Chatbot'un daha doğru cevaplar verebilmesi için
-            soruları ve cevapları mümkün olduğunca açık ve
-            anlaşılır şekilde yazmaya çalış.
+            {unknownQuestionId
+              ? "Bu soru chatbot tarafından daha önce cevaplanamadı. Doğru cevabı girerek chatbot'un gelecekte bu soruya cevap verebilmesini sağlayabilirsin."
+              : "Chatbot'un daha doğru cevaplar verebilmesi için soruları ve cevapları mümkün olduğunca açık ve anlaşılır şekilde yazmaya çalış."}
           </p>
-
 
           <div className="info-list">
 
@@ -229,41 +346,54 @@ function CreateKnowledgePage() {
               <span>01</span>
 
               <div>
-                <strong>Açık bir soru yaz</strong>
+
+                <strong>
+                  Açık bir soru yaz
+                </strong>
 
                 <p>
-                  Kullanıcının sorabileceği doğal bir ifade kullan.
+                  Kullanıcının sorabileceği
+                  doğal bir ifade kullan.
                 </p>
+
               </div>
 
             </div>
-
 
             <div className="info-item">
 
               <span>02</span>
 
               <div>
-                <strong>Net bir cevap ver</strong>
+
+                <strong>
+                  Net bir cevap ver
+                </strong>
 
                 <p>
-                  Bilgiyi kısa ve anlaşılır şekilde açıklayın.
+                  Chatbot'un kullanacağı
+                  doğru cevabı yaz.
                 </p>
+
               </div>
 
             </div>
-
 
             <div className="info-item">
 
               <span>03</span>
 
               <div>
-                <strong>Kategori belirle</strong>
+
+                <strong>
+                  Kategori belirle
+                </strong>
 
                 <p>
-                  Bilgileri düzenli tutmak için uygun kategori kullan.
+                  Bilgileri düzenli tutmak
+                  için uygun kategori kullan.
                 </p>
+
               </div>
 
             </div>

@@ -21,18 +21,28 @@ public class UnknownQuestionsController : ControllerBase
         _knowledgeService = knowledgeService;
     }
 
+    // =========================
+    // TÜM UNKNOWN QUESTIONS
+    // =========================
+
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        var questions = await _repository.GetAllAsync();
+        var questions =
+            await _repository.GetAllAsync();
 
         return Ok(questions);
     }
 
+    // =========================
+    // TEK UNKNOWN QUESTION
+    // =========================
+
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
-        var question = await _repository.GetByIdAsync(id);
+        var question =
+            await _repository.GetByIdAsync(id);
 
         if (question == null)
             return NotFound();
@@ -40,15 +50,26 @@ public class UnknownQuestionsController : ControllerBase
         return Ok(question);
     }
 
+    // =========================
+    // UNKNOWN QUESTION
+    // -> KNOWLEDGE
+    // =========================
+
     [HttpPost("{id}/convert-to-knowledge")]
     public async Task<IActionResult> ConvertToKnowledge(
         int id,
-        CreateKnowledgeDto dto)
+        ConvertUnknownQuestionDto dto)
     {
-        var question = await _repository.GetByIdAsync(id);
+        var question =
+            await _repository.GetByIdAsync(id);
 
         if (question == null)
-            return NotFound();
+        {
+            return NotFound(new
+            {
+                message = "Unknown Question bulunamadı."
+            });
+        }
 
         if (question.IsResolved)
         {
@@ -58,47 +79,112 @@ public class UnknownQuestionsController : ControllerBase
             });
         }
 
-        // Knowledge oluştur
-        var knowledge =
-            await _knowledgeService.CreateAsync(dto);
+        // =========================
+        // VALIDATION
+        // =========================
 
-        // Unknown Question çözüldü olarak işaretle
+        if (string.IsNullOrWhiteSpace(dto.Answer))
+        {
+            return BadRequest(new
+            {
+                message = "Cevap boş olamaz."
+            });
+        }
+
+        if (string.IsNullOrWhiteSpace(dto.Category))
+        {
+            return BadRequest(new
+            {
+                message = "Kategori boş olamaz."
+            });
+        }
+
+        // =========================
+        // KNOWLEDGE OLUŞTUR
+        // =========================
+
+        var knowledgeDto =
+            new CreateKnowledgeDto
+            {
+                Title = question.Question,
+
+                Category = dto.Category,
+
+                Content = dto.Answer,
+
+                Source = "Unknown Question",
+
+                Tags = "unknown-question",
+
+                Priority = 1,
+
+                IsPublished = true
+            };
+
+        var knowledge =
+            await _knowledgeService.CreateAsync(
+                knowledgeDto);
+
+        // =========================
+        // UNKNOWN QUESTION ÇÖZÜLDÜ
+        // =========================
+
         question.IsResolved = true;
 
-        await _repository.UpdateAsync(question);
+        await _repository.UpdateAsync(
+            question);
+
+        // =========================
+        // RESPONSE
+        // =========================
 
         return Ok(new
         {
-            message = "Unknown Question başarıyla Knowledge'a dönüştürüldü.",
+            message =
+                "Unknown Question başarıyla Knowledge'a dönüştürüldü.",
+
             unknownQuestion = question,
-            knowledge
+
+            knowledge = knowledge
         });
     }
+
+    // =========================
+    // ÇÖZÜLDÜ
+    // =========================
 
     [HttpPut("{id}/resolve")]
     public async Task<IActionResult> Resolve(int id)
     {
-        var question = await _repository.GetByIdAsync(id);
+        var question =
+            await _repository.GetByIdAsync(id);
 
         if (question == null)
             return NotFound();
 
         question.IsResolved = true;
 
-        await _repository.UpdateAsync(question);
+        await _repository.UpdateAsync(
+            question);
 
         return Ok(question);
     }
 
+    // =========================
+    // SİL
+    // =========================
+
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
-        var question = await _repository.GetByIdAsync(id);
+        var question =
+            await _repository.GetByIdAsync(id);
 
         if (question == null)
             return NotFound();
 
-        await _repository.DeleteAsync(question);
+        await _repository.DeleteAsync(
+            question);
 
         return NoContent();
     }

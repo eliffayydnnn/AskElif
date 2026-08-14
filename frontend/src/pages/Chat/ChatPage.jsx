@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { Send, Bot, CircleCheck } from "lucide-react";
+import {
+  Send,
+  Bot,
+  CircleCheck,
+  Plus,
+} from "lucide-react";
+import ReactMarkdown from "react-markdown";
+
 import api from "../../api/api";
 import "../../styles/chat.css";
 
@@ -8,6 +15,24 @@ function ChatPage() {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  // =========================
+  // YENİ SOHBET
+  // =========================
+
+  const handleNewChat = () => {
+    if (loading) {
+      return;
+    }
+
+    setConversationId(null);
+    setMessages([]);
+    setMessage("");
+  };
+
+  // =========================
+  // MESAJ GÖNDER
+  // =========================
 
   const handleSend = async (e) => {
     e.preventDefault();
@@ -18,6 +43,7 @@ function ChatPage() {
 
     const userMessage = message.trim();
 
+    // Kullanıcı mesajını ekle
     setMessages((prev) => [
       ...prev,
       {
@@ -30,6 +56,11 @@ function ChatPage() {
     setLoading(true);
 
     try {
+      console.log("========== CHAT REQUEST ==========");
+      console.log("ConversationId:", conversationId);
+      console.log("Message:", userMessage);
+      console.log("==================================");
+
       const response = await api.post("/Chat", {
         conversationId: conversationId,
         message: userMessage,
@@ -37,8 +68,14 @@ function ChatPage() {
 
       const data = response.data;
 
+      console.log("========== CHAT RESPONSE ==========");
+      console.log("Response:", data);
+      console.log("===================================");
+
+      // Conversation ID'yi sakla
       setConversationId(data.conversationId);
 
+      // Bot cevabını ekle
       setMessages((prev) => [
         ...prev,
         {
@@ -47,15 +84,27 @@ function ChatPage() {
         },
       ]);
     } catch (error) {
-      console.log(error);
-      console.log(error.response?.data);
+      console.error("========== CHAT ERROR ==========");
+      console.error("Error:", error);
+      console.error("Status:", error.response?.status);
+      console.error("Response:", error.response?.data);
+      console.error(
+        "Message:",
+        error.response?.data?.message
+      );
+      console.error(
+        "Detail:",
+        error.response?.data?.detail
+      );
+      console.error("================================");
 
       setMessages((prev) => [
         ...prev,
         {
           role: "Assistant",
           content:
-            "Bir hata oluştu. Lütfen tekrar deneyin.",
+            error.response?.data?.message ||
+            "Chat sırasında bir hata oluştu.",
         },
       ]);
     } finally {
@@ -66,7 +115,9 @@ function ChatPage() {
   return (
     <div className="chat-page">
 
-      {/* HEADER */}
+      {/* =========================
+          HEADER
+      ========================= */}
 
       <header className="chat-page-header">
 
@@ -88,19 +139,41 @@ function ChatPage() {
 
         </div>
 
-        <div className="chat-status">
-          <span className="chat-status-dot"></span>
-          Online
+        <div className="chat-header-actions">
+
+          {/* YENİ SOHBET */}
+
+          <button
+            type="button"
+            className="chat-new-button"
+            onClick={handleNewChat}
+            disabled={loading}
+          >
+            <Plus size={17} />
+            Yeni Sohbet
+          </button>
+
+          {/* ONLINE DURUMU */}
+
+          <div className="chat-status">
+            <span className="chat-status-dot"></span>
+            Online
+          </div>
+
         </div>
 
       </header>
 
 
-      {/* MAIN */}
+      {/* =========================
+          MAIN
+      ========================= */}
 
       <main className="chat-main">
 
-        {/* WELCOME */}
+        {/* =========================
+            WELCOME
+        ========================= */}
 
         {messages.length === 0 && (
           <div className="chat-welcome">
@@ -124,7 +197,9 @@ function ChatPage() {
         )}
 
 
-        {/* MESSAGES */}
+        {/* =========================
+            MESSAGES
+        ========================= */}
 
         <div className="chat-messages">
 
@@ -143,11 +218,21 @@ function ChatPage() {
                 <div className="chat-bubble">
 
                   <div className="chat-message-role">
-                    {isUser ? "Sen" : "AskElif"}
+                    {isUser
+                      ? "Sen"
+                      : "AskElif"}
                   </div>
 
-                  <div>
-                    {item.content}
+                  <div className="chat-message-content">
+
+                    {isUser ? (
+                      item.content
+                    ) : (
+                      <ReactMarkdown>
+                        {item.content}
+                      </ReactMarkdown>
+                    )}
+
                   </div>
 
                 </div>
@@ -157,7 +242,9 @@ function ChatPage() {
           })}
 
 
-          {/* LOADING */}
+          {/* =========================
+              LOADING
+          ========================= */}
 
           {loading && (
             <div className="chat-message assistant">
@@ -176,7 +263,9 @@ function ChatPage() {
         </div>
 
 
-        {/* INPUT */}
+        {/* =========================
+            INPUT
+        ========================= */}
 
         <form
           className="chat-input-area"
@@ -196,7 +285,9 @@ function ChatPage() {
           <button
             className="chat-send-button"
             type="submit"
-            disabled={loading || !message.trim()}
+            disabled={
+              loading || !message.trim()
+            }
           >
             <Send size={19} />
           </button>
@@ -204,7 +295,12 @@ function ChatPage() {
         </form>
 
 
+        {/* =========================
+            FOOTER
+        ========================= */}
+
         <div className="chat-footer">
+
           <CircleCheck
             size={12}
             style={{
@@ -212,8 +308,10 @@ function ChatPage() {
               marginRight: "4px",
             }}
           />
+
           AskElif yalnızca bilgi tabanındaki
           içeriklere göre cevap verir.
+
         </div>
 
       </main>

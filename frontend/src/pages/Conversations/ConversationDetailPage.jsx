@@ -11,47 +11,80 @@ function ConversationDetailPage() {
 
   useEffect(() => {
     fetchConversation();
-  }, []);
+  }, [id]);
 
   const fetchConversation = async () => {
     try {
       const response = await api.get(`/Conversation/${id}`);
+
       setConversation(response.data);
     } catch (error) {
       console.log(error);
+
       alert("Konuşma yüklenemedi.");
     } finally {
       setLoading(false);
     }
   };
 
+  /* =========================================
+     LOADING
+  ========================================= */
+
   if (loading) {
     return (
       <div className="conversation-detail-loading">
         <div className="conversation-spinner"></div>
-        <span>Konuşma yükleniyor...</span>
+
+        <span>
+          Konuşma yükleniyor...
+        </span>
       </div>
     );
   }
+
+  /* =========================================
+     NOT FOUND
+  ========================================= */
 
   if (!conversation) {
     return (
       <div className="conversation-detail-empty">
-        <div className="empty-chat-icon">💬</div>
-        <h3>Konuşma bulunamadı</h3>
-        <p>Bu konuşmaya ait herhangi bir kayıt bulunamadı.</p>
 
-        <Link to="/conversations" className="back-button">
+        <div className="empty-chat-icon">
+          💬
+        </div>
+
+        <h3>
+          Konuşma bulunamadı
+        </h3>
+
+        <p>
+          Bu konuşmaya ait herhangi bir kayıt bulunamadı.
+        </p>
+
+        <Link
+          to="/conversations"
+          className="back-button"
+        >
           ← Konuşmalara Dön
         </Link>
+
       </div>
     );
   }
 
+  /* =========================================
+     PAGE
+  ========================================= */
+
   return (
     <div className="conversation-detail-page">
 
-      {/* HEADER */}
+      {/* =========================================
+          HEADER
+      ========================================= */}
+
       <div className="chat-header">
 
         <div className="chat-heading">
@@ -61,6 +94,7 @@ function ConversationDetailPage() {
           </div>
 
           <div>
+
             <div className="chat-title">
               Conversation Detail
             </div>
@@ -68,6 +102,7 @@ function ConversationDetailPage() {
             <div className="chat-subtitle">
               Kullanıcı ile AskElif arasında gerçekleşen konuşma.
             </div>
+
           </div>
 
         </div>
@@ -81,8 +116,12 @@ function ConversationDetailPage() {
 
       </div>
 
-      {/* CONVERSATION INFO */}
-      <div className="conversation-info">
+
+      {/* =========================================
+          CONVERSATION INFO
+      ========================================= */}
+
+      <div className="conversation-detail-info">
 
         <div className="conversation-info-item">
 
@@ -96,7 +135,9 @@ function ConversationDetailPage() {
 
         </div>
 
+
         <div className="conversation-info-divider"></div>
+
 
         <div className="conversation-info-item">
 
@@ -112,7 +153,9 @@ function ConversationDetailPage() {
 
         </div>
 
+
         <div className="conversation-info-divider"></div>
+
 
         <div className="conversation-info-item">
 
@@ -121,54 +164,94 @@ function ConversationDetailPage() {
           </span>
 
           <span className="info-value">
-            {conversation.messages.length}
+            {conversation.messages?.length ?? 0}
           </span>
 
         </div>
 
       </div>
 
-      {/* CHAT */}
+
+      {/* =========================================
+          CHAT
+      ========================================= */}
+
       <div className="chat-container">
 
-        {conversation.messages.map((message, index) => {
+        {conversation.messages?.length > 0 ? (
 
-          const isUser = message.role === "User";
+          conversation.messages.map((message, index) => {
 
-          return (
-            <div
-              key={index}
-              className={`message ${
-                isUser ? "user" : "assistant"
-              }`}
-            >
+            const isUser =
+              message.role?.toLowerCase() === "user";
 
-              <div className="message-avatar">
-                {isUser ? "👤" : "🤖"}
+            return (
+              <div
+                key={message.id ?? index}
+                className={`message ${
+                  isUser
+                    ? "user"
+                    : "assistant"
+                }`}
+              >
+
+                {/* AVATAR */}
+
+                <div className="message-avatar">
+                  {isUser ? "👤" : "🤖"}
+                </div>
+
+
+                {/* CONTENT */}
+
+                <div className="message-content">
+
+                  <div className="message-role">
+                    {isUser
+                      ? "User"
+                      : "AskElif"}
+                  </div>
+
+                  <div className="message-bubble">
+                    {message.content}
+                  </div>
+
+                  <div className="message-time">
+
+                    {message.createdAt
+                      ? new Date(
+                          message.createdAt
+                        ).toLocaleString("tr-TR")
+                      : ""}
+
+                  </div>
+
+                </div>
+
               </div>
+            );
 
-              <div className="message-content">
+          })
 
-                <div className="message-role">
-                  {isUser ? "User" : "AskElif"}
-                </div>
+        ) : (
 
-                <div className="message-bubble">
-                  {message.content}
-                </div>
+          <div className="conversation-detail-empty">
 
-                <div className="message-time">
-                  {new Date(
-                    message.createdAt
-                  ).toLocaleString("tr-TR")}
-                </div>
-
-              </div>
-
+            <div className="empty-chat-icon">
+              💬
             </div>
-          );
 
-        })}
+            <h3>
+              Henüz mesaj yok
+            </h3>
+
+            <p>
+              Bu konuşmada henüz herhangi bir mesaj bulunmuyor.
+            </p>
+
+          </div>
+
+        )}
 
       </div>
 

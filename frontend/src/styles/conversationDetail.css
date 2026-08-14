@@ -40,6 +40,7 @@
   background: #fff0f6;
   border: 1px solid #f4d7e4;
 
+  color: #df6696;
   font-size: 21px;
 }
 
@@ -82,7 +83,10 @@
   font-size: 11px;
   font-weight: 650;
 
-  box-shadow: 0 4px 12px rgba(70, 40, 55, 0.04);
+  text-decoration: none;
+
+  box-shadow:
+    0 4px 12px rgba(70, 40, 55, 0.04);
 
   transition:
     background 0.2s ease,
@@ -103,9 +107,12 @@
    CONVERSATION INFO
 ========================================= */
 
-.conversation-info {
+.conversation-detail-info {
   display: flex;
   align-items: center;
+
+  width: 100%;
+  box-sizing: border-box;
 
   background: #ffffff;
 
@@ -150,6 +157,8 @@
   width: 1px;
   height: 34px;
 
+  flex-shrink: 0;
+
   background: #f0e6eb;
 
   margin: 0 25px;
@@ -161,6 +170,9 @@
 ========================================= */
 
 .chat-container {
+  width: 100%;
+  box-sizing: border-box;
+
   background: #ffffff;
 
   border: 1px solid #f0dce5;
@@ -168,7 +180,7 @@
 
   padding: 28px;
 
-  min-height: 400px;
+  min-height: 220px;
 
   box-shadow:
     0 7px 22px rgba(70, 40, 55, 0.04);
@@ -196,7 +208,9 @@
 }
 
 
-/* USER */
+/* =========================================
+   USER
+========================================= */
 
 .message.user {
   margin-left: auto;
@@ -205,7 +219,9 @@
 }
 
 
-/* ASSISTANT */
+/* =========================================
+   ASSISTANT
+========================================= */
 
 .message.assistant {
   margin-right: auto;
@@ -297,7 +313,9 @@
 }
 
 
-/* USER BUBBLE */
+/* =========================================
+   USER BUBBLE
+========================================= */
 
 .message.user .message-bubble {
   background: #fff0f6;
@@ -310,7 +328,9 @@
 }
 
 
-/* ASSISTANT BUBBLE */
+/* =========================================
+   ASSISTANT BUBBLE
+========================================= */
 
 .message.assistant .message-bubble {
   background: #f5f2ff;
@@ -361,7 +381,6 @@
   height: 28px;
 
   border: 3px solid #f4dce7;
-
   border-top-color: #df6696;
 
   border-radius: 50%;
@@ -416,6 +435,8 @@
 
   background: #fff0f6;
 
+  color: #df6696;
+
   font-size: 23px;
 }
 
@@ -454,7 +475,7 @@
     width: 100%;
   }
 
-  .conversation-info {
+  .conversation-detail-info {
     align-items: flex-start;
 
     flex-direction: column;
@@ -475,6 +496,8 @@
 
   .chat-container {
     padding: 18px;
+
+    min-height: 180px;
   }
 
   .message {

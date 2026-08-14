@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+
 import {
   BookOpen,
   MessageCircle,
@@ -10,7 +11,6 @@ import {
   Activity,
   Database,
   Bot,
-  CheckCircle2,
 } from "lucide-react";
 
 import api from "../../api/api";
@@ -34,6 +34,7 @@ function DashboardPage() {
   const fetchDashboard = async () => {
     try {
       const response = await api.get("/Dashboard");
+
       setDashboard(response.data);
     } catch (error) {
       console.log("Dashboard Hatası:", error);
@@ -42,100 +43,161 @@ function DashboardPage() {
     }
   };
 
+  /* =========================================
+     LOADING
+  ========================================= */
+
   if (loading) {
     return (
       <div className="dashboard-loading">
-        Dashboard yükleniyor...
+        <div className="dashboard-loading-spinner"></div>
+
+        <span>
+          Dashboard yükleniyor...
+        </span>
       </div>
     );
   }
+
+
+  /* =========================================
+     ERROR
+  ========================================= */
 
   if (!dashboard) {
     return (
       <div className="dashboard-error">
-        <strong>Dashboard verisi alınamadı</strong>
-        <span>Lütfen API bağlantısını kontrol edin.</span>
+
+        <div className="dashboard-error-icon">
+          !
+        </div>
+
+        <strong>
+          Dashboard verisi alınamadı
+        </strong>
+
+        <span>
+          Lütfen API bağlantısını kontrol edin.
+        </span>
+
       </div>
     );
   }
 
+
   return (
     <div className="dashboard-page">
 
-      {/* HERO */}
+      {/* =========================================
+          HERO
+      ========================================= */}
 
       <section className="dashboard-hero">
+
+        <div className="hero-decoration hero-decoration-one"></div>
+
+        <div className="hero-decoration hero-decoration-two"></div>
+
 
         <div className="hero-content">
 
           <span className="hero-badge">
-            <Activity size={14} />
+
+            <Activity size={13} />
+
             Admin Dashboard
+
           </span>
+
 
           <h1>
             Hoş Geldin, <span>Elif</span> 👋
           </h1>
 
+
           <p>
             AskElif chatbot sistemini buradan yönetebilir,
-            konuşmaları inceleyebilir ve cevaplanamayan soruları
-            takip edebilirsin.
+            konuşmaları inceleyebilir ve cevaplanamayan
+            soruları takip edebilirsin.
           </p>
 
         </div>
 
+
         <div className="hero-date">
-          <span>Bugün</span>
-          <strong>{today}</strong>
+
+          <span>
+            Bugün
+          </span>
+
+          <strong>
+            {today}
+          </strong>
+
         </div>
 
       </section>
 
 
-      {/* STAT CARDS */}
+
+      {/* =========================================
+          STAT CARDS
+      ========================================= */}
 
       <section className="stats-grid">
 
         <DashboardCard
           title="Knowledge"
           value={dashboard.knowledgeCount}
-          icon={<BookOpen size={22} />}
+          icon={<BookOpen size={21} />}
           description="Kayıtlı bilgi"
+          type="pink"
         />
+
 
         <DashboardCard
           title="Conversations"
           value={dashboard.conversationCount}
-          icon={<MessageCircle size={22} />}
+          icon={<MessageCircle size={21} />}
           description="Toplam konuşma"
+          type="purple"
         />
+
 
         <DashboardCard
           title="Messages"
           value={dashboard.messageCount}
-          icon={<Mail size={22} />}
+          icon={<Mail size={21} />}
           description="Toplam mesaj"
+          type="blue"
         />
+
 
         <DashboardCard
           title="Unknown Questions"
           value={dashboard.unknownQuestionCount}
-          icon={<CircleHelp size={22} />}
+          icon={<CircleHelp size={21} />}
           description="Cevap bekleyen"
-          warning={dashboard.unknownQuestionCount > 0}
+          warning={
+            dashboard.unknownQuestionCount > 0
+          }
+          type="orange"
         />
 
       </section>
 
 
-      {/* QUICK ACTIONS */}
+
+      {/* =========================================
+          QUICK ACTIONS
+      ========================================= */}
 
       <section className="dashboard-section">
 
         <div className="section-heading">
 
           <div>
+
             <span className="section-eyebrow">
               Hızlı Erişim
             </span>
@@ -143,6 +205,7 @@ function DashboardPage() {
             <h2>
               Quick Actions
             </h2>
+
           </div>
 
         </div>
@@ -150,14 +213,20 @@ function DashboardPage() {
 
         <div className="quick-actions-grid">
 
+
+          {/* NEW KNOWLEDGE */}
+
           <Link
             to="/knowledge/create"
             className="action-card"
           >
 
             <div className="action-icon pink">
-              <Plus size={22} />
+
+              <Plus size={21} />
+
             </div>
+
 
             <div className="action-content">
 
@@ -171,13 +240,21 @@ function DashboardPage() {
 
             </div>
 
-            <ArrowRight
-              className="action-arrow"
-              size={19}
-            />
+
+            <div className="action-arrow-wrapper">
+
+              <ArrowRight
+                className="action-arrow"
+                size={17}
+              />
+
+            </div>
 
           </Link>
 
+
+
+          {/* CONVERSATIONS */}
 
           <Link
             to="/conversations"
@@ -185,8 +262,11 @@ function DashboardPage() {
           >
 
             <div className="action-icon purple">
-              <MessageCircle size={22} />
+
+              <MessageCircle size={21} />
+
             </div>
+
 
             <div className="action-content">
 
@@ -195,27 +275,39 @@ function DashboardPage() {
               </h3>
 
               <p>
-                Kullanıcıların chatbot ile yaptığı konuşmaları incele.
+                Kullanıcıların chatbot ile yaptığı
+                konuşmaları incele.
               </p>
 
             </div>
 
-            <ArrowRight
-              className="action-arrow"
-              size={19}
-            />
+
+            <div className="action-arrow-wrapper">
+
+              <ArrowRight
+                className="action-arrow"
+                size={17}
+              />
+
+            </div>
 
           </Link>
 
 
+
+          {/* UNKNOWN QUESTIONS */}
+
           <Link
-            to="/unknownquestions"
+            to="/unknown-questions"
             className="action-card"
           >
 
             <div className="action-icon orange">
-              <CircleHelp size={22} />
+
+              <CircleHelp size={21} />
+
             </div>
+
 
             <div className="action-content">
 
@@ -224,15 +316,21 @@ function DashboardPage() {
               </h3>
 
               <p>
-                Chatbot'un cevaplayamadığı soruları yönet.
+                Chatbot'un cevaplayamadığı
+                soruları yönet.
               </p>
 
             </div>
 
-            <ArrowRight
-              className="action-arrow"
-              size={19}
-            />
+
+            <div className="action-arrow-wrapper">
+
+              <ArrowRight
+                className="action-arrow"
+                size={17}
+              />
+
+            </div>
 
           </Link>
 
@@ -241,12 +339,17 @@ function DashboardPage() {
       </section>
 
 
-      {/* BOTTOM AREA */}
+
+      {/* =========================================
+          BOTTOM AREA
+      ========================================= */}
 
       <section className="dashboard-bottom">
 
 
-        {/* RECENT ACTIVITY */}
+        {/* =========================================
+            RECENT ACTIVITY
+        ========================================= */}
 
         <div className="dashboard-panel">
 
@@ -264,8 +367,11 @@ function DashboardPage() {
 
             </div>
 
+
             <div className="panel-icon">
-              <Activity size={19} />
+
+              <Activity size={18} />
+
             </div>
 
           </div>
@@ -273,30 +379,22 @@ function DashboardPage() {
 
           <div className="activity-list">
 
-            <ActivityItem
-              title="Yeni bilgi eklendi"
-              time="2 dk önce"
-              icon={<BookOpen size={17} />}
-            />
+            <div className="activity-empty">
 
-            <ActivityItem
-              title="Conversation görüntülendi"
-              time="10 dk önce"
-              icon={<MessageCircle size={17} />}
-            />
+              Henüz görüntülenecek bir
+              aktivite bulunmuyor.
 
-            <ActivityItem
-              title="Unknown Question çözüldü"
-              time="1 saat önce"
-              icon={<CheckCircle2 size={17} />}
-            />
+            </div>
 
           </div>
 
         </div>
 
 
-        {/* SYSTEM STATUS */}
+
+        {/* =========================================
+            SYSTEM STATUS
+        ========================================= */}
 
         <div className="dashboard-panel">
 
@@ -314,8 +412,11 @@ function DashboardPage() {
 
             </div>
 
+
             <div className="panel-icon">
-              <Activity size={19} />
+
+              <Activity size={18} />
+
             </div>
 
           </div>
@@ -323,25 +424,28 @@ function DashboardPage() {
 
           <div className="status-list">
 
+
             <StatusItem
-              icon={<Activity size={16} />}
+              icon={<Activity size={15} />}
               title="API"
               status="Online"
               type="success"
             />
 
+
             <StatusItem
-              icon={<Database size={16} />}
+              icon={<Database size={15} />}
               title="Database"
               status="Connected"
               type="success"
             />
 
+
             <StatusItem
-              icon={<Bot size={16} />}
+              icon={<Bot size={15} />}
               title="Chatbot"
-              status="Training"
-              type="warning"
+              status="Online"
+              type="success"
             />
 
           </div>
@@ -365,15 +469,21 @@ function DashboardCard({
   icon,
   description,
   warning,
+  type,
 }) {
   return (
-    <div className={`stat-card ${warning ? "warning-card" : ""}`}>
+    <div
+      className={`stat-card ${
+        warning ? "warning-card" : ""
+      } ${type || ""}`}
+    >
 
       <div className="stat-top">
 
         <div className="stat-icon">
           {icon}
         </div>
+
 
         {warning && (
           <span className="stat-alert">
@@ -383,50 +493,23 @@ function DashboardCard({
 
       </div>
 
+
       <div className="stat-title">
         {title}
       </div>
+
 
       <div className="stat-value">
         {value}
       </div>
 
+
       <div className="stat-description">
         {description}
       </div>
 
-    </div>
-  );
-}
 
-
-/* =========================================
-   ACTIVITY ITEM
-========================================= */
-
-function ActivityItem({
-  title,
-  time,
-  icon,
-}) {
-  return (
-    <div className="activity-item">
-
-      <div className="activity-icon">
-        {icon}
-      </div>
-
-      <div className="activity-info">
-
-        <span>
-          {title}
-        </span>
-
-        <small>
-          {time}
-        </small>
-
-      </div>
+      <div className="stat-line"></div>
 
     </div>
   );
@@ -458,7 +541,10 @@ function StatusItem({
 
       </div>
 
-      <span className={`status-badge ${type}`}>
+
+      <span
+        className={`status-badge ${type}`}
+      >
 
         <span className="status-dot"></span>
 
@@ -469,5 +555,6 @@ function StatusItem({
     </div>
   );
 }
+
 
 export default DashboardPage;

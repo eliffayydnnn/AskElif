@@ -14,20 +14,22 @@ public class GeminiService
         if (string.IsNullOrWhiteSpace(apiKey))
         {
             throw new InvalidOperationException(
-                "Gemini API key bulunamadı."
-            );
+                "Gemini API key bulunamadı.");
         }
 
-        _client = new Client(apiKey: apiKey);
+        _client = new Client(
+            apiKey: apiKey);
     }
 
-    public async Task<string> GenerateAsync(string prompt)
+    public async Task<string> GenerateAsync(
+        string prompt)
     {
-        var response = await _client.Models.GenerateContentAsync(
-            model: "gemini-3.6-flash",
-            contents: prompt
-        );
+        var response =
+            await _client.Models.GenerateContentAsync(
+                model: "gemini-3.6-flash",
+                contents: prompt);
 
-        return response.Text ?? string.Empty;
+        return response.Text?.Trim()
+               ?? string.Empty;
     }
-}
+} 

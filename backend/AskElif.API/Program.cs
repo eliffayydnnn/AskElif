@@ -105,6 +105,23 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        db.Database.EnsureCreated();
+        if (!db.AdminUsers.Any(x => x.Email == "admin@askelif.com"))
+        {
+            db.AdminUsers.Add(new AskElif.API.Models.AdminUser
+            {
+                Email = "admin@askelif.com",
+                FullName = "Elif Aydin",
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword("admin123")
+            });
+            db.SaveChanges();
+            Console.WriteLine("Development Admin user seeded: admin@askelif.com / admin123");
+        }
+    }
 }
 
 app.UseHttpsRedirection();
@@ -116,3 +133,5 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }

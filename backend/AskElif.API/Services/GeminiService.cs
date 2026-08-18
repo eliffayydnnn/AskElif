@@ -21,7 +21,7 @@ public class GeminiService
             apiKey: apiKey);
     }
 
-    public async Task<string> GenerateAsync(
+    public virtual async Task<string> GenerateAsync(
         string prompt)
     {
         var response =

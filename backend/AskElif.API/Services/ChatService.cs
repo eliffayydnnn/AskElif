@@ -14,6 +14,7 @@ public class ChatService : IChatService
 
     // Semantic search için minimum eşleşme
     private const double MinimumSimilarity = 0.45;
+    private const double StrongSimilarityThreshold = 0.70;
 
     public ChatService(
         IKnowledgeSearchService knowledgeSearchService,
@@ -110,6 +111,50 @@ public class ChatService : IChatService
                 Answer = unknownAnswer,
                 IsAnswered = false
             };
+        }
+
+        // =========================================
+        // ORTA SIMILARITY & RELEVANCE CHECK
+        // =========================================
+
+        var maxSimilarity = relevantResults[0].SimilarityScore;
+        if (maxSimilarity < StrongSimilarityThreshold)
+        {
+            var relevancePrompt = $"""
+                Aşağıdaki bilgiler kullanıcının sorusunu yanıtlamak için yeterli ve ilgili midir?
+                SADECE "YES" veya "NO" olarak cevap ver. Başka açıklama ekleme.
+
+                --- BİLGİLER ---
+                {string.Join("\n", relevantResults.Select(x => $"- {x.Item.Title}: {x.Item.Content}"))}
+
+                --- SORU ---
+                {question}
+                """;
+
+            var relevanceAnswer = await _geminiService.GenerateAsync(relevancePrompt);
+            var isRelevant = relevanceAnswer.Trim().Equals("YES", StringComparison.OrdinalIgnoreCase);
+
+            if (!isRelevant)
+            {
+                const string unknownAnswer = "Bu konuda henüz bilgim bulunmuyor.";
+
+                await SaveUnknownQuestion(question);
+
+                await _messageRepository.AddAsync(
+                    new Message
+                    {
+                        ConversationId = conversation.Id,
+                        Role = "Assistant",
+                        Content = unknownAnswer
+                    });
+
+                return new ChatResultDto
+                {
+                    ConversationId = conversation.Id,
+                    Answer = unknownAnswer,
+                    IsAnswered = false
+                };
+            }
         }
 
         // =========================================

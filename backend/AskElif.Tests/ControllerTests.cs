@@ -253,6 +253,133 @@ namespace AskElif.Tests
         }
 
         [Fact]
+        public async Task Knowledge_GetAll_Returns200()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync("/api/Knowledge");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task Knowledge_Create_Returns201()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            _factory.EmbeddingServiceMock
+                .Setup(x => x.GenerateEmbeddingAsync(It.IsAny<string>()))
+                .ReturnsAsync(new float[] { 0.1f, 0.2f, 0.3f });
+
+            var createDto = new CreateKnowledgeDto
+            {
+                Title = "Controller Test Knowledge",
+                Category = "Test",
+                Content = "Controller test content",
+                Source = "Unit Test",
+                Tags = "test",
+                Priority = 1,
+                IsPublished = true
+            };
+
+            var response = await _client.PostAsJsonAsync("/api/Knowledge", createDto);
+            Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+            var created = await response.Content.ReadFromJsonAsync<KnowledgeDto>();
+            Assert.NotNull(created);
+            Assert.True(created.Id > 0);
+        }
+
+        [Fact]
+        public async Task Dashboard_Get_Returns200()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync("/api/Dashboard");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var dashboard = await response.Content.ReadFromJsonAsync<DashboardDto>();
+            Assert.NotNull(dashboard);
+        }
+
+        [Fact]
+        public async Task Conversation_GetAll_Returns200()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync("/api/Conversation");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UnknownQuestions_GetAll_Returns200()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            var response = await _client.GetAsync("/api/UnknownQuestions");
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
+
+        [Fact]
+        public async Task UnknownQuestions_ResolveExisting_Returns200()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            int questionId;
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var question = new UnknownQuestion
+                {
+                    Question = "Resolve test question",
+                    IsResolved = false
+                };
+                db.UnknownQuestions.Add(question);
+                await db.SaveChangesAsync();
+                questionId = question.Id;
+            }
+
+            var response = await _client.PutAsync($"/api/UnknownQuestions/{questionId}/resolve", null);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+            var resolved = await response.Content.ReadFromJsonAsync<UnknownQuestion>();
+            Assert.NotNull(resolved);
+            Assert.True(resolved.IsResolved);
+        }
+
+        [Fact]
+        public async Task UnknownQuestions_DeleteExisting_Returns204()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            int questionId;
+            using (var scope = _factory.Services.CreateScope())
+            {
+                var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                var question = new UnknownQuestion
+                {
+                    Question = "Delete test question",
+                    IsResolved = false
+                };
+                db.UnknownQuestions.Add(question);
+                await db.SaveChangesAsync();
+                questionId = question.Id;
+            }
+
+            var response = await _client.DeleteAsync($"/api/UnknownQuestions/{questionId}");
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+            var getResponse = await _client.GetAsync($"/api/UnknownQuestions/{questionId}");
+            Assert.Equal(HttpStatusCode.NotFound, getResponse.StatusCode);
+        }
+
+        [Fact]
         public async Task Chat_PostToPublicEndpoint_Returns200()
         {
             // Public endpoint, no token required

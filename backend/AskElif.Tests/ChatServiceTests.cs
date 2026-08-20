@@ -73,6 +73,52 @@ namespace AskElif.Tests
         }
 
         [Fact]
+        public async Task AskAsync_WithKnowledgeFound_SavesMessagesCallsSearchAndReturnsAnswer()
+        {
+            // Arrange
+            int conversationId = 10;
+            string question = "Elif hangi üniversiteden mezun oldu?";
+
+            _conversationRepoMock.Setup(x => x.CreateIfNotExistsAsync(conversationId))
+                .ReturnsAsync(new Conversation { Id = conversationId });
+
+            var item = new KnowledgeItem
+            {
+                Title = "Eğitim",
+                Content = "Elif İstanbul Teknik Üniversitesi'nden mezun oldu.",
+                Category = "Eğitim"
+            };
+
+            var searchResult = new KnowledgeSearchResultDto
+            {
+                Item = item,
+                SimilarityScore = 0.85
+            };
+
+            _searchServiceMock.Setup(x => x.SearchAsync(question, 3))
+                .ReturnsAsync(new List<KnowledgeSearchResultDto> { searchResult });
+
+            _geminiServiceMock.Setup(x => x.GenerateAsync(It.IsAny<string>()))
+                .ReturnsAsync("Elif İstanbul Teknik Üniversitesi'nden mezun oldu.");
+
+            // Act
+            var result = await _chatService.AskAsync(conversationId, question);
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.Equal(conversationId, result.ConversationId);
+            Assert.True(result.IsAnswered);
+            Assert.Equal("Elif İstanbul Teknik Üniversitesi'nden mezun oldu.", result.Answer);
+
+            _searchServiceMock.Verify(x => x.SearchAsync(question, 3), Times.Once);
+            _conversationRepoMock.Verify(x => x.CreateIfNotExistsAsync(conversationId), Times.Once);
+            _messageRepoMock.Verify(x => x.AddAsync(It.Is<Message>(m => m.Role == "User" && m.Content == question)), Times.Once);
+            _messageRepoMock.Verify(x => x.AddAsync(It.Is<Message>(m => m.Role == "Assistant" && m.Content == "Elif İstanbul Teknik Üniversitesi'nden mezun oldu.")), Times.Once);
+            _geminiServiceMock.Verify(x => x.GenerateAsync(It.IsAny<string>()), Times.Once);
+            _unknownRepoMock.Verify(x => x.AddAsync(It.IsAny<UnknownQuestion>()), Times.Never);
+        }
+
+        [Fact]
         public async Task AskAsync_WithStrongSimilarity_BypassesRelevanceCheckAndReturnsAnswer()
         {
             // Arrange

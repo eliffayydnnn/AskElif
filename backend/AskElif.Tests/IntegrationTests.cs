@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Text.Json;
 
 namespace AskElif.Tests
 {
@@ -300,6 +301,76 @@ namespace AskElif.Tests
 
             Assert.Equal("Assistant", conversationDetails.Messages[3].Role);
             Assert.Equal("Bu konuda henüz bilgim bulunmuyor.", conversationDetails.Messages[3].Content);
+        }
+
+        // ==========================================
+        // FLOW 5: CHATBOT E2E - KNOWN QUESTION
+        // ==========================================
+        [Fact]
+        public async Task Flow_Chat_KnownQuestion_ReturnsAnsweredResponse()
+        {
+            var token = await GetTokenAsync();
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+            _factory.EmbeddingServiceMock
+                .Setup(x => x.GenerateEmbeddingAsync(It.IsAny<string>()))
+                .ReturnsAsync(new float[] { 1f, 0f, 0f });
+
+            // 1. Seed knowledge item with matching embedding vector
+            var createDto = new CreateKnowledgeDto
+            {
+                Title = "Elif hangi üniversiteden mezun oldu?",
+                Category = "Eğitim",
+                Content = "Elif İstanbul Teknik Üniversitesi Bilgisayar Mühendisliği bölümünden mezun oldu.",
+                Source = "CV",
+                Tags = "eğitim,üniversite",
+                Priority = 1,
+                IsPublished = true
+            };
+
+            var postResponse = await _client.PostAsJsonAsync("/api/Knowledge", createDto);
+            Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+
+            // 2. Ask known question via public chat endpoint
+            _factory.GeminiServiceMock
+                .Setup(x => x.GenerateAsync(It.Is<string>(p => p.Contains("Sen AskElif isimli"))))
+                .ReturnsAsync("Elif İstanbul Teknik Üniversitesi'nden mezun oldu.");
+
+            var chatRequest = new ChatRequestDto
+            {
+                ConversationId = null,
+                Message = "Elif hangi üniversiteden mezun oldu?"
+            };
+
+            _client.DefaultRequestHeaders.Authorization = null;
+            var chatResponse = await _client.PostAsJsonAsync("/api/Chat", chatRequest);
+            Assert.Equal(HttpStatusCode.OK, chatResponse.StatusCode);
+
+            var chatResult = await chatResponse.Content.ReadFromJsonAsync<ChatResponseDto>();
+            Assert.NotNull(chatResult);
+            Assert.True(chatResult.IsAnswered);
+            Assert.Equal("Elif İstanbul Teknik Üniversitesi'nden mezun oldu.", chatResult.Answer);
+            Assert.True(chatResult.ConversationId > 0);
+
+            // 3. Verify messages were saved
+            _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            var convResponse = await _client.GetAsync($"/api/Conversation/{chatResult.ConversationId}");
+            Assert.Equal(HttpStatusCode.OK, convResponse.StatusCode);
+
+            var conversation = await convResponse.Content.ReadFromJsonAsync<ConversationDto>();
+            Assert.NotNull(conversation);
+            Assert.Equal(2, conversation.Messages.Count);
+            Assert.Equal("User", conversation.Messages[0].Role);
+            Assert.Equal("Elif hangi üniversiteden mezun oldu?", conversation.Messages[0].Content);
+            Assert.Equal("Assistant", conversation.Messages[1].Role);
+
+            // 4. Verify no new UnknownQuestion was created for this question
+            var unknownResponse = await _client.GetAsync("/api/UnknownQuestions");
+            var unknownQuestions = await unknownResponse.Content.ReadFromJsonAsync<List<UnknownQuestion>>();
+            Assert.NotNull(unknownQuestions);
+            Assert.DoesNotContain(
+                unknownQuestions,
+                q => q.Question == "Elif hangi üniversiteden mezun oldu?" && !q.IsResolved);
         }
     }
 }

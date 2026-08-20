@@ -1,4 +1,4 @@
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 
 import LoginPage from "./pages/Login/LoginPage";
 import ChatPage from "./pages/Chat/ChatPage";
@@ -13,6 +13,7 @@ import ConversationPage from "./pages/Conversations/ConversationPage";
 import ConversationDetailPage from "./pages/Conversations/ConversationDetailPage";
 
 import UnknownQuestionsPage from "./pages/UnknownQuestions/UnknownQuestionsPage";
+import NotFoundPage from "./pages/NotFound/NotFoundPage";
 
 import ProtectedRoute from "./components/layout/ProtectedRoute";
 import AdminLayout from "./components/layout/AdminLayout";
@@ -117,7 +118,7 @@ function App() {
       {/* 404 */}
       <Route
         path="*"
-        element={<Navigate to="/" replace />}
+        element={<NotFoundPage />}
       />
 
     </Routes>

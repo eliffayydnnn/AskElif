@@ -1,0 +1,103 @@
+/* =========================================
+   404 NOT FOUND PAGE
+========================================= */
+
+.not-found-page {
+  width: 100%;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+}
+
+.not-found-card {
+  max-width: 520px;
+  width: 100%;
+  background: #ffffff;
+  border: 1px solid #f1dce6;
+  border-radius: 24px;
+  padding: 40px 32px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(70, 40, 55, 0.06);
+}
+
+.not-found-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 16px;
+  background: #fdebf3;
+  color: #df6696;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found-code {
+  display: inline-block;
+  padding: 4px 14px;
+  background: #fff0f6;
+  color: #c94f7f;
+  border: 1px solid #f2d8e4;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.not-found-card h1 {
+  font-size: 26px;
+  font-weight: 750;
+  color: #2b242a;
+  margin-bottom: 10px;
+}
+
+.not-found-card p {
+  font-size: 14px;
+  color: #7e737c;
+  line-height: 1.6;
+  margin-bottom: 28px;
+}
+
+.not-found-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.not-found-primary-btn,
+.not-found-secondary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.not-found-primary-btn {
+  background: linear-gradient(135deg, #e46e9f 0%, #d8578c 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(216, 87, 140, 0.25);
+}
+
+.not-found-primary-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+.not-found-secondary-btn {
+  background: #fff8fb;
+  color: #645a62;
+  border: 1px solid #ebd3df;
+}
+
+.not-found-secondary-btn:hover {
+  background: #fdebf3;
+  color: #df6696;
+}

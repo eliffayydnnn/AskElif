@@ -205,12 +205,20 @@ npm run lint
 
 Ekran görüntüleri rehberi `docs/screenshots/` klasöründe yer almaktadır. Uygulama çalıştırıldığında aşağıdaki ekranlar kaydedilebilir:
 
-- **Public Chat:** AI Chatbot arayüzü (`/chat`)
-- **Admin Login:** Yönetici giriş paneli (`/`)
-- **Dashboard:** Genel istatistik ve özet paneli (`/dashboard`)
-- **Knowledge Base:** Bilgi tabanı içerik yönetimi (`/knowledge`)
-- **Unknown Questions:** Bilinmeyen soru takip ve dönüştürme ekranı (`/unknownquestions`)
-- **Mobile Drawer:** Mobil cihaz açılır menü (<= 768px)
+- **Public Chat:** Kullanıcıların Elif'in deneyimleri, projeleri, teknik yetkinlikleri ve eğitimi hakkında doğal dilde sorular sorabildiği AI destekli sohbet arayüzü.
+- <img width="1910" height="943" alt="image" src="https://github.com/user-attachments/assets/5b70a3cc-0420-4165-972c-405bfaa9da30" />
+
+- **Admin Login:** Yönetim paneline güvenli erişim sağlayan JWT tabanlı yönetici giriş ekranı.
+- <img width="1900" height="938" alt="image" src="https://github.com/user-attachments/assets/282d21fb-0bce-470d-a870-ceb31d1210f4" />
+
+- **Dashboard:** Bilgi tabanı, sohbetler ve bilinmeyen sorular gibi temel sistem özelliklerinin görüntülendiği yönetim paneli.
+- <img width="1870" height="936" alt="image" src="https://github.com/user-attachments/assets/f603a425-9fe7-400e-b98d-e36194353ed8" />
+
+- **Knowledge Base:** Chatbot'un kullandığı CV bilgilerinin eklenebildiği, düzenlenebildiği, filtrelenebildiği ve yönetilebildiği içerik yönetim ekranı.
+- <img width="1901" height="944" alt="image" src="https://github.com/user-attachments/assets/65143091-0dc9-4bd1-90dd-5a5a503d53ae" />
+
+- **Unknown Questions:** Chatbot'un cevaplayamadığı veya bilgi tabanında karşılığı bulunmayan soruların incelendiği ve bilgi tabanına dönüştürülebildiği yönetim ekranı.
+-<img width="1883" height="924" alt="image" src="https://github.com/user-attachments/assets/90a4e5de-3c61-4732-8c26-7a4686f0fac5" />
 
 ---
 

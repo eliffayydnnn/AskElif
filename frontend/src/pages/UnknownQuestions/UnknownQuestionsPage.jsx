@@ -9,6 +9,7 @@ import {
   BookOpen,
 } from "lucide-react";
 
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/unknownQuestions.css";
 
@@ -19,6 +20,7 @@ function UnknownQuestionsPage() {
   const [filteredQuestions, setFilteredQuestions] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [actionId, setActionId] = useState(null);
 
   useEffect(() => {
     fetchQuestions();
@@ -40,11 +42,8 @@ function UnknownQuestionsPage() {
 
       setQuestions(response.data);
       setFilteredQuestions(response.data);
-    } catch (error) {
-      console.log(error);
-      console.log(error.response?.data);
-
-      alert("Sorular yüklenemedi.");
+    } catch {
+      toast.error("Sorular yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -77,6 +76,7 @@ function UnknownQuestionsPage() {
     }
 
     try {
+      setActionId(id);
       await api.put(`/UnknownQuestions/${id}/resolve`);
 
       setQuestions((prev) =>
@@ -90,12 +90,11 @@ function UnknownQuestionsPage() {
         )
       );
 
-      alert("Soru çözüldü olarak işaretlendi.");
-    } catch (error) {
-      console.log(error);
-      console.log(error.response?.data);
-
-      alert("İşlem başarısız.");
+      toast.success("Soru çözüldü olarak işaretlendi.");
+    } catch {
+      toast.error("İşlem başarısız.");
+    } finally {
+      setActionId(null);
     }
   };
 
@@ -113,18 +112,18 @@ function UnknownQuestionsPage() {
     }
 
     try {
+      setActionId(id);
       await api.delete(`/UnknownQuestions/${id}`);
 
       setQuestions((prev) =>
         prev.filter((item) => item.id !== id)
       );
 
-      alert("Soru silindi.");
-    } catch (error) {
-      console.log(error);
-      console.log(error.response?.data);
-
-      alert("Silinemedi.");
+      toast.success("Soru silindi.");
+    } catch {
+      toast.error("Silinemedi.");
+    } finally {
+      setActionId(null);
     }
   };
 
@@ -339,11 +338,12 @@ function UnknownQuestionsPage() {
                       onClick={() =>
                         handleResolve(item.id)
                       }
+                      disabled={actionId === item.id}
                     >
 
                       <Check size={14} />
 
-                      Çözüldü
+                      {actionId === item.id ? "İşleniyor..." : "Çözüldü"}
 
                     </button>
 
@@ -357,11 +357,12 @@ function UnknownQuestionsPage() {
                     onClick={() =>
                       handleDelete(item.id)
                     }
+                    disabled={actionId === item.id}
                   >
 
                     <Trash2 size={14} />
 
-                    Sil
+                    {actionId === item.id ? "Siliniyor..." : "Sil"}
 
                   </button>
 

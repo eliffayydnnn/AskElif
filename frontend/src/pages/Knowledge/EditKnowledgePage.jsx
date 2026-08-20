@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/editKnowledge.css";
 
@@ -15,17 +16,12 @@ function EditKnowledgePage() {
   const [priority, setPriority] = useState(1);
   const [isPublished, setIsPublished] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     const fetchKnowledge = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        const response = await api.get(`/Knowledge/${id}`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get(`/Knowledge/${id}`);
 
         const data = response.data;
 
@@ -36,9 +32,8 @@ function EditKnowledgePage() {
         setTags(data.tags ?? "");
         setPriority(data.priority ?? 1);
         setIsPublished(data.isPublished ?? true);
-      } catch (error) {
-        console.log(error);
-        alert("Bilgi yüklenemedi.");
+      } catch {
+        toast.error("Bilgi yüklenemedi.");
       } finally {
         setLoading(false);
       }
@@ -50,9 +45,23 @@ function EditKnowledgePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    try {
-      const token = localStorage.getItem("token");
+    if (!title.trim()) {
+      toast.warning("Lütfen başlık girin.");
+      return;
+    }
 
+    if (!content.trim()) {
+      toast.warning("Lütfen içerik girin.");
+      return;
+    }
+
+    if (!category.trim()) {
+      toast.warning("Lütfen kategori girin.");
+      return;
+    }
+
+    try {
+      setSaving(true);
       await api.put(
         `/Knowledge/${id}`,
         {
@@ -63,22 +72,15 @@ function EditKnowledgePage() {
           tags,
           priority,
           isPublished,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
         }
       );
 
-      alert("Bilgi başarıyla güncellendi.");
-
+      toast.success("Bilgi başarıyla güncellendi.");
       navigate("/knowledge");
     } catch (error) {
-      console.log(error);
-      console.log(error.response?.data);
-
-      alert("Güncelleme başarısız.");
+      toast.error(error.response?.data?.message || "Güncelleme başarısız.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -240,6 +242,7 @@ function EditKnowledgePage() {
               type="button"
               className="edit-cancel-button"
               onClick={() => navigate("/knowledge")}
+              disabled={saving}
             >
               İptal
             </button>
@@ -247,8 +250,9 @@ function EditKnowledgePage() {
             <button
               type="submit"
               className="edit-save-button"
+              disabled={saving}
             >
-              Değişiklikleri Kaydet
+              {saving ? "Kaydediliyor..." : "Değişiklikleri Kaydet"}
             </button>
 
           </div>

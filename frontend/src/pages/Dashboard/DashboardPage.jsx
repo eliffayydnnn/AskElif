@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 import {
   BookOpen,
@@ -36,8 +37,8 @@ function DashboardPage() {
       const response = await api.get("/Dashboard");
 
       setDashboard(response.data);
-    } catch (error) {
-      console.log("Dashboard Hatası:", error);
+    } catch {
+      toast.error("Dashboard verileri alınırken bir hata oluştu.");
     } finally {
       setLoading(false);
     }

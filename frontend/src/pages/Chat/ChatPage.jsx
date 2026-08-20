@@ -56,21 +56,12 @@ function ChatPage() {
     setLoading(true);
 
     try {
-      console.log("========== CHAT REQUEST ==========");
-      console.log("ConversationId:", conversationId);
-      console.log("Message:", userMessage);
-      console.log("==================================");
-
       const response = await api.post("/Chat", {
         conversationId: conversationId,
         message: userMessage,
       });
 
       const data = response.data;
-
-      console.log("========== CHAT RESPONSE ==========");
-      console.log("Response:", data);
-      console.log("===================================");
 
       // Conversation ID'yi sakla
       setConversationId(data.conversationId);
@@ -84,19 +75,6 @@ function ChatPage() {
         },
       ]);
     } catch (error) {
-      console.error("========== CHAT ERROR ==========");
-      console.error("Error:", error);
-      console.error("Status:", error.response?.status);
-      console.error("Response:", error.response?.data);
-      console.error(
-        "Message:",
-        error.response?.data?.message
-      );
-      console.error(
-        "Detail:",
-        error.response?.data?.detail
-      );
-      console.error("================================");
 
       setMessages((prev) => [
         ...prev,

@@ -13,6 +13,7 @@ import {
   FileText,
 } from "lucide-react";
 
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/createKnowledge.css";
 
@@ -46,17 +47,17 @@ function CreateKnowledgePage() {
     e.preventDefault();
 
     if (!question.trim()) {
-      alert("Lütfen soruyu doldurun.");
+      toast.warning("Lütfen soruyu doldurun.");
       return;
     }
 
     if (!answer.trim()) {
-      alert("Lütfen cevabı doldurun.");
+      toast.warning("Lütfen cevabı doldurun.");
       return;
     }
 
     if (!category.trim()) {
-      alert("Lütfen kategori girin.");
+      toast.warning("Lütfen kategori girin.");
       return;
     }
 
@@ -68,7 +69,7 @@ function CreateKnowledgePage() {
       // =========================
 
       if (unknownQuestionId) {
-        const response = await api.post(
+        await api.post(
           `/UnknownQuestions/${unknownQuestionId}/convert-to-knowledge`,
           {
             answer: answer,
@@ -76,14 +77,7 @@ function CreateKnowledgePage() {
           }
         );
 
-        console.log(
-          "Unknown Question -> Knowledge:",
-          response.data
-        );
-
-        alert(
-          "Cevap kaydedildi ve Knowledge'a eklendi."
-        );
+        toast.success("Cevap kaydedildi ve Knowledge'a eklendi.");
       }
 
       // =========================
@@ -91,7 +85,7 @@ function CreateKnowledgePage() {
       // =========================
 
       else {
-        const response = await api.post(
+        await api.post(
           "/Knowledge",
           {
             title: question,
@@ -104,36 +98,14 @@ function CreateKnowledgePage() {
           }
         );
 
-        console.log(
-          "Knowledge oluşturuldu:",
-          response.data
-        );
-
-        alert(
-          "Bilgi başarıyla eklendi."
-        );
+        toast.success("Bilgi başarıyla eklendi.");
       }
 
       // Knowledge listesine dön
       navigate("/knowledge");
 
     } catch (error) {
-      console.error(
-        "Knowledge save error:",
-        error
-      );
-
-      console.error(
-        "Response:",
-        error.response?.data
-      );
-
-      console.error(
-        "Status:",
-        error.response?.status
-      );
-
-      alert(
+      toast.error(
         error.response?.data?.message ||
         "Bilgi kaydedilirken bir hata oluştu."
       );
@@ -288,7 +260,7 @@ function CreateKnowledgePage() {
                 type="button"
                 className="cancel-button"
                 onClick={() =>
-                  navigate("/unknown-questions")
+                  navigate(unknownQuestionId ? "/unknownquestions" : "/knowledge")
                 }
                 disabled={saving}
               >

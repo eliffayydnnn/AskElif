@@ -12,6 +12,7 @@ import {
   Database,
 } from "lucide-react";
 
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/knowledge.css";
 
@@ -20,6 +21,7 @@ function KnowledgePage() {
   const [filteredList, setFilteredList] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchKnowledge();
@@ -49,8 +51,8 @@ function KnowledgePage() {
 
       setKnowledgeList(response.data);
       setFilteredList(response.data);
-    } catch (error) {
-      console.log("Knowledge Hatası:", error);
+    } catch {
+      toast.error("Bilgi kayıtları yüklenirken bir hata oluştu.");
     } finally {
       setLoading(false);
     }
@@ -64,16 +66,20 @@ function KnowledgePage() {
     if (!confirmDelete) return;
 
     try {
+      setDeletingId(id);
       await api.delete(`/Knowledge/${id}`);
 
       setKnowledgeList((prev) =>
         prev.filter((item) => item.id !== id)
       );
 
+      toast.success("Bilgi silindi.");
       alert("Bilgi silindi.");
-    } catch (error) {
-      console.log(error);
+    } catch {
+      toast.error("Silme işlemi başarısız.");
       alert("Silme işlemi başarısız.");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -393,10 +399,11 @@ function KnowledgePage() {
                         onClick={() =>
                           handleDelete(item.id)
                         }
+                        disabled={deletingId === item.id}
                         title="Sil"
                       >
                         <Trash2 size={14} />
-                        Sil
+                        {deletingId === item.id ? "Siliniyor..." : "Sil"}
                       </button>
 
                     </div>

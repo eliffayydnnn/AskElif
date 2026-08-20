@@ -1,30 +1,40 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, ArrowRight } from "lucide-react";
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/login.css";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
+    if (!email.trim() || !password.trim() || loading) {
+      return;
+    }
+
     try {
+      setLoading(true);
       const response = await api.post("/Auth/login", {
         email,
         password,
       });
 
       localStorage.setItem("token", response.data.token);
+      toast.success("Giriş başarılı.");
 
       navigate("/dashboard");
     } catch (error) {
-      console.log(error);
+      toast.error(error.response?.data?.message || "Email veya şifre hatalı.");
       alert("Email veya şifre hatalı.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -173,9 +183,10 @@ function LoginPage() {
           <button
             className="login-button"
             type="submit"
+            disabled={loading}
           >
             <span>
-              Giriş Yap
+              {loading ? "Giriş yapılıyor..." : "Giriş Yap"}
             </span>
 
             <ArrowRight size={18} />

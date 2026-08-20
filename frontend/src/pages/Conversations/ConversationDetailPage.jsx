@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/conversationDetail.css";
 
@@ -9,23 +10,21 @@ function ConversationDetailPage() {
   const [conversation, setConversation] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchConversation();
-  }, [id]);
-
-  const fetchConversation = async () => {
+  const fetchConversation = useCallback(async () => {
     try {
       const response = await api.get(`/Conversation/${id}`);
 
       setConversation(response.data);
-    } catch (error) {
-      console.log(error);
-
-      alert("Konuşma yüklenemedi.");
+    } catch {
+      toast.error("Konuşma detayları yüklenemedi.");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
+
+  useEffect(() => {
+    fetchConversation();
+  }, [fetchConversation]);
 
   /* =========================================
      LOADING

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { MessageCircle, Search, Eye, Trash2 } from "lucide-react";
+import { toast } from "react-toastify";
 import api from "../../api/api";
 import "../../styles/conversations.css";
 
@@ -9,6 +10,7 @@ function ConversationPage() {
   const [filteredConversations, setFilteredConversations] = useState([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState(null);
 
   useEffect(() => {
     fetchConversations();
@@ -30,9 +32,8 @@ function ConversationPage() {
 
       setConversations(response.data);
       setFilteredConversations(response.data);
-    } catch (error) {
-      console.log(error);
-      alert("Konuşmalar yüklenemedi.");
+    } catch {
+      toast.error("Konuşmalar yüklenemedi.");
     } finally {
       setLoading(false);
     }
@@ -46,16 +47,18 @@ function ConversationPage() {
     if (!confirmDelete) return;
 
     try {
+      setDeletingId(id);
       await api.delete(`/Conversation/${id}`);
 
       setConversations((prev) =>
         prev.filter((item) => item.id !== id)
       );
 
-      alert("Konuşma silindi.");
-    } catch (error) {
-      console.log(error);
-      alert("Silme işlemi başarısız.");
+      toast.success("Konuşma silindi.");
+    } catch {
+      toast.error("Silme işlemi başarısız.");
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -208,9 +211,10 @@ function ConversationPage() {
                     onClick={() =>
                       handleDelete(conversation.id)
                     }
+                    disabled={deletingId === conversation.id}
                   >
                     <Trash2 size={15} />
-                    Sil
+                    {deletingId === conversation.id ? "Siliniyor..." : "Sil"}
                   </button>
 
                 </div>

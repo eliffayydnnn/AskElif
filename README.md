@@ -3,13 +3,13 @@
 [![Backend .NET](https://img.shields.io/badge/.NET-8.0-512BD4?style=flat&logo=dotnet)](https://dotnet.microsoft.com/)
 [![React](https://img.shields.io/badge/React-19.2-61DAFB?style=flat&logo=react)](https://react.dev/)
 [![Vite](https://img.shields.io/badge/Vite-8.2-646CFF?style=flat&logo=vite)](https://vitejs.dev/)
-[![Google Gemini](https://img.shields.io/badge/AI-Gemini_2.5_Flash-8E75B2?style=flat&logo=google)](https://deepmind.google/technologies/gemini/)
+[![Google Gemini](https://img.shields.io/badge/AI-Gemini_3.6_Flash-8E75B2?style=flat&logo=google)](https://deepmind.google/technologies/gemini/)
 [![Jina AI](https://img.shields.io/badge/Embeddings-Jina_v3-000000?style=flat)](https://jina.ai/)
 [![Tests](https://img.shields.io/badge/Tests-72_Passed-success?style=flat)](https://github.com/eliffayydnnn/AskElif)
 
 **AskElif**, Elif Aydın'ın mesleki yetenekleri, projeleri, eğitimi ve deneyimleri hakkında akıllı, hızlı ve bağlama uygun cevaplar sunan **AI destekli bir CV Asistanı ve Yönetim Paneli** platformudur.
 
-Sistem, **RAG (Retrieval-Augmented Generation)** mimarisini kullanarak semantik arama, cosine benzerlik kontrolleri ve **Google Gemini 2.5 Flash** büyük dil modeli ile bütünleşik çalışır. Cevaplanamayan veya düşük benzerliğe sahip soruları otomatik tespit ederek yönetici onayına sunan bir **Unknown Questions** mekanizmasına sahiptir.
+Sistem, **RAG (Retrieval-Augmented Generation)** mimarisini kullanarak semantik arama, cosine benzerlik kontrolleri ve **Google Gemini 3.6 Flash** büyük dil modeli ile bütünleşik çalışır. Cevaplanamayan veya düşük benzerliğe sahip soruları otomatik tespit ederek yönetici onayına sunan bir **Unknown Questions** mekanizmasına sahiptir.
 
 ---
 
@@ -33,7 +33,7 @@ Sistem, **RAG (Retrieval-Augmented Generation)** mimarisini kullanarak semantik 
 - **Semantik Arama:** Kullanıcı sorularına bilgi tabanındaki içeriklerle Jina AI embedding vektörleri ve Cosine Similarity kullanarak benzerlik araması yapar.
 - **Benzerlik Eşikleri:**
   - **Yüksek Benzerlik (>= 0.70):** Bilgi tabanındaki yanıtı doğrudan sunar.
-  - **Orta Benzerlik (0.45 - 0.70):** Gemini 2.5 Flash modeli ile soru-cevap alaka kontrolü (`relevance check`) yaparak cevabı doğrular.
+  - **Orta Benzerlik (0.45 - 0.70):** Gemini 3.6 Flash modeli ile soru-cevap alaka kontrolü (`relevance check`) yaparak cevabı doğrular.
   - **Düşük Benzerlik (< 0.45):** Bilgi bulunamadığında kullanıcıya nazikçe bildirir ve soruyu admin kontrolü için kaydeder.
 
 ### ❓ 2. Otomatik Bilinmeyen Soru Tespiti (Unknown Questions)
@@ -77,7 +77,7 @@ Sistem, **RAG (Retrieval-Augmented Generation)** mimarisini kullanarak semantik 
 - **React Toastify (`v11.1`):** Kullanıcı bilgilendirme ve toast bildirimleri.
 
 ### AI & Vektör Teknolojileri
-- **Google Gemini 2.5 Flash (`gemini-2.5-flash`):** Büyük Dil Modeli (LLM) ile alaka kontrolü ve yanıt üretimi.
+- **Google Gemini 3.6 Flash (`gemini-3.6-flash`):** Büyük Dil Modeli (LLM) ile alaka kontrolü ve yanıt üretimi.
 - **Jina AI (`jina-embeddings-v3`):** Metin tabanlı içeriklerin 1536-boyutlu vektör karşılıklarını üretme.
 
 ### Testing & QA Tools

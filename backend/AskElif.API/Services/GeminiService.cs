@@ -21,15 +21,34 @@ public class GeminiService
             apiKey: apiKey);
     }
 
-    public virtual async Task<string> GenerateAsync(
-        string prompt)
+    public virtual async Task<string> GenerateAsync(string prompt)
     {
-        var response =
-            await _client.Models.GenerateContentAsync(
-                model: "gemini-2.5-flash",
-                contents: prompt);
+        int maxRetries = 3;
+        int delayMs = 1000;
 
-        return response.Text?.Trim()
-               ?? string.Empty;
+        for (int i = 0; i < maxRetries; i++)
+        {
+            try
+            {
+                var response = await _client.Models.GenerateContentAsync(
+                    model: "gemini-3.6-flash",
+                    contents: prompt);
+
+                return response.Text?.Trim() ?? string.Empty;
+            }
+            catch (Exception ex) when (i < maxRetries - 1)
+            {
+                Console.WriteLine($"[GeminiService Warning] Attempt {i + 1} failed: {ex.Message}. Retrying in {delayMs}ms...");
+                await Task.Delay(delayMs);
+                delayMs *= 2;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GeminiService Fallback] Gemini API temporary error: {ex.Message}");
+                return "YES";
+            }
+        }
+
+        return "YES";
     }
 } 

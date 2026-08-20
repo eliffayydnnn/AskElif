@@ -26,7 +26,7 @@ public class GeminiService
     {
         var response =
             await _client.Models.GenerateContentAsync(
-                model: "gemini-3.6-flash",
+                model: "gemini-2.5-flash",
                 contents: prompt);
 
         return response.Text?.Trim()
